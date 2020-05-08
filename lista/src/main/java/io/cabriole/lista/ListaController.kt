@@ -153,7 +153,7 @@ abstract class ListaController<T : Any>(
         layoutManager = createLayoutManager(recyclerView.context)
         recyclerView.layoutManager = layoutManager
 
-        var recycledViewPool = createRecycledViewPool()
+        val recycledViewPool = createRecycledViewPool()
         if (recycledViewPool != null) {
             recyclerView.setRecycledViewPool(recycledViewPool)
         }
@@ -194,7 +194,7 @@ abstract class ListaController<T : Any>(
     open fun submitList(
         items: List<T>,
         dispatchImmediately: Boolean = false,
-        applyDiffing: Boolean = false
+        applyDiffing: Boolean = true
     ) {
         val currentRecyclerView = recyclerView
             ?: throw IllegalStateException(

@@ -201,8 +201,6 @@ abstract class ListaController<T : Any>(
                 "A RecyclerView wasn't found. Setup must be called before"
             )
 
-        currentRecyclerView.invalidateItemDecorations()
-
         if (dispatchImmediately || isDispatchingAdapterChangesSafe(currentRecyclerView)) {
             // Cancel any pending checks or updates
             currentRecyclerView.itemAnimator?.isRunning(null)
@@ -229,6 +227,9 @@ abstract class ListaController<T : Any>(
     }
 
     override fun onCurrentListChanged(previousList: MutableList<T>, currentList: MutableList<T>) {
+        // Invalidate item decorations after adapter changes
+        recyclerView?.invalidateItemDecorations()
+
         if (previousList.isEmpty() && currentList.isNotEmpty()) {
             recyclerView?.let { animateRecyclerView(it) }
         }

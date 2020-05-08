@@ -153,7 +153,7 @@ abstract class ListaController<T : Any>(
         layoutManager = createLayoutManager(recyclerView.context)
         recyclerView.layoutManager = layoutManager
 
-        var recycledViewPool = createRecycledViewPool()
+        val recycledViewPool = createRecycledViewPool()
         if (recycledViewPool != null) {
             recyclerView.setRecycledViewPool(recycledViewPool)
         }
@@ -194,14 +194,12 @@ abstract class ListaController<T : Any>(
     open fun submitList(
         items: List<T>,
         dispatchImmediately: Boolean = false,
-        applyDiffing: Boolean = false
+        applyDiffing: Boolean = true
     ) {
         val currentRecyclerView = recyclerView
             ?: throw IllegalStateException(
                 "A RecyclerView wasn't found. Setup must be called before"
             )
-
-        currentRecyclerView.invalidateItemDecorations()
 
         if (dispatchImmediately || isDispatchingAdapterChangesSafe(currentRecyclerView)) {
             // Cancel any pending checks or updates
@@ -229,6 +227,9 @@ abstract class ListaController<T : Any>(
     }
 
     override fun onCurrentListChanged(previousList: MutableList<T>, currentList: MutableList<T>) {
+        // Invalidate item decorations after adapter changes
+        recyclerView?.invalidateItemDecorations()
+
         if (previousList.isEmpty() && currentList.isNotEmpty()) {
             recyclerView?.let { animateRecyclerView(it) }
         }

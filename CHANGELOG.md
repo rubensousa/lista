@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.2
+
+#### Testing
+
+- Loop main thread in `SmoothScrollToPositionAction` to avoid flakiness
+
 ## 1.0.1
 
 #### `ListaController`

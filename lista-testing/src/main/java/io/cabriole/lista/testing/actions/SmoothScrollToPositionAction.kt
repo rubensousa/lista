@@ -18,10 +18,7 @@ package io.cabriole.lista.testing.actions
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import androidx.test.espresso.IdlingRegistry
-import androidx.test.espresso.IdlingResource
-import androidx.test.espresso.UiController
-import androidx.test.espresso.ViewAction
+import androidx.test.espresso.*
 import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import org.hamcrest.CoreMatchers.allOf
@@ -46,6 +43,7 @@ class SmoothScrollToPositionAction(private val position: Int) : ViewAction {
         val idlingResource = ScrollingIdlingResource(recyclerView)
         IdlingRegistry.getInstance().register(idlingResource)
         recyclerView.smoothScrollToPosition(position)
+        uiController.loopMainThreadForAtLeast(300L)
         IdlingRegistry.getInstance().unregister(idlingResource)
     }
 

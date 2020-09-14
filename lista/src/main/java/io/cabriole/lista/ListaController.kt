@@ -196,11 +196,7 @@ abstract class ListaController<T : Any>(
         dispatchImmediately: Boolean = false,
         applyDiffing: Boolean = true
     ) {
-        val currentRecyclerView = recyclerView
-            ?: throw IllegalStateException(
-                "A RecyclerView wasn't found. Setup must be called before"
-            )
-
+        val currentRecyclerView = recyclerView ?: return
         if (dispatchImmediately || isDispatchingAdapterChangesSafe(currentRecyclerView)) {
             // Cancel any pending checks or updates
             currentRecyclerView.itemAnimator?.isRunning(null)

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3
+
+- Don't throw an `IllegalStateException` when `ListaController.submitList` is called without a RecyclerView attached.
+
 ## 1.0.2
 
 #### Testing

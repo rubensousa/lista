@@ -6,10 +6,10 @@ It also comes with useful Espresso extensions that help you build UI tests that 
 ## Install
 
 ```groovy
- implementation 'com.rubensousa.lista:lista:x.x.x'
+ implementation 'com.rubensousa.lista:lista:1.0.0'
  
  // Optional Espresso test extensions
- androidTestImplementation 'com.rubensousa.lista:lista-testing:x.x.x'
+ androidTestImplementation 'com.rubensousa.lista:lista-testing:1.0.0'
 ```
 
 Replace x.x.x with the latest version available

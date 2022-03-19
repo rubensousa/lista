@@ -6,10 +6,10 @@ It also comes with useful Espresso extensions that help you build UI tests that 
 ## Install
 
 ```groovy
- implementation 'io.cabriole.lista:lista:x.x.x'
+ implementation 'com.rubensousa.lista:lista:x.x.x'
  
  // Optional Espresso test extensions
- androidTestImplementation 'io.cabriole.lista:lista-testing:x.x.x'
+ androidTestImplementation 'com.rubensousa.lista:lista-testing:x.x.x'
 ```
 
 Replace x.x.x with the latest version available
@@ -187,7 +187,7 @@ Check the sample app for a complete example of integration of the library.
 
 ## License
 
-    Copyright 2020 Cabriole
+    Copyright 2022 Rúben Sousa
     
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

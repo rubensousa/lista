@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.cabriole.lista.sample">
+    package="com.rubensousa.lista.sample">
 
     <application
         android:allowBackup="true"

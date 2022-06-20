@@ -30,12 +30,12 @@ object ListaActions {
 
     @JvmStatic
     fun waitForItemViewLayout(): ViewAction {
-        return com.rubensousa.lista.testing.actions.WaitForItemViewLayoutAction()
+        return WaitForItemViewLayoutAction()
     }
 
     @JvmStatic
     fun smoothScrollTo(position: Int): ViewAction {
-        return com.rubensousa.lista.testing.actions.SmoothScrollToPositionAction(position)
+        return SmoothScrollToPositionAction(position)
     }
 
     /**
@@ -83,7 +83,7 @@ object ListaActions {
         itemViewMatcher: Matcher<View>,
         itemMatchIndex: Int = 0
     ): ViewAction {
-        return com.rubensousa.lista.testing.actions.ListaActions.performOnNestedView(
+        return performOnNestedView(
             itemViewMatcher,
             ViewActions.click(),
             itemMatchIndex
@@ -101,7 +101,7 @@ object ListaActions {
         itemViewMatcher: Matcher<View>,
         itemMatchIndex: Int = 0
     ): ViewAction {
-        return com.rubensousa.lista.testing.actions.ListaActions.performOnNestedView(
+        return performOnNestedView(
             itemViewMatcher,
             ViewActions.click(),
             itemMatchIndex

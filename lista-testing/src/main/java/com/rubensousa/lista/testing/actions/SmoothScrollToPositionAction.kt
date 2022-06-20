@@ -40,10 +40,7 @@ class SmoothScrollToPositionAction(private val position: Int) : ViewAction {
 
     override fun perform(uiController: UiController, view: View) {
         val recyclerView = view as RecyclerView
-        val idlingResource =
-            com.rubensousa.lista.testing.actions.SmoothScrollToPositionAction.ScrollingIdlingResource(
-                recyclerView
-            )
+        val idlingResource = ScrollingIdlingResource(recyclerView)
         IdlingRegistry.getInstance().register(idlingResource)
         recyclerView.smoothScrollToPosition(position)
         uiController.loopMainThreadForAtLeast(300L)

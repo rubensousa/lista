@@ -16,6 +16,7 @@
 
 package com.rubensousa.lista.nested
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -43,6 +44,7 @@ class ListaRecyclerView : RecyclerView {
 
     constructor(context: Context) : this(context, null)
 
+    @SuppressLint("PrivateResource")
     constructor(context: Context, attrs: AttributeSet?) : this(
         context,
         attrs,

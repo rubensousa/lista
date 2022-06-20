@@ -32,6 +32,7 @@
 
 package com.rubensousa.lista
 
+import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.VisibleForTesting
@@ -91,6 +92,7 @@ class ListaAsyncDiffer<T>(
         return list!!
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun submitImmediately(adapter: RecyclerView.Adapter<*>, newList: List<T>) {
         // incrementing generation means any currently-running diffs are discarded when they finish
         maxScheduledGeneration++
@@ -101,7 +103,7 @@ class ListaAsyncDiffer<T>(
         list = newList
         maxScheduledGeneration++
         adapter.notifyDataSetChanged()
-        onCurrentListChanged(oldList, null)
+        onCurrentListChanged(oldList)
     }
 
     /**
@@ -255,14 +257,12 @@ class ListaAsyncDiffer<T>(
         onCurrentListChanged(previousList, commitCallback)
     }
 
-    private fun onCurrentListChanged(
-        previousList: List<T>,
-        commitCallback: Runnable?
-    ) {
+    private fun onCurrentListChanged(previousList: List<T>, commitCallback: Runnable? = null) {
         val currentList = getCurrentList()
         for (listener in listeners) {
             listener.onCurrentListChanged(previousList, currentList)
         }
         commitCallback?.run()
     }
+
 }

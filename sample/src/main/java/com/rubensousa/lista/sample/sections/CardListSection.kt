@@ -19,7 +19,7 @@ package com.rubensousa.lista.sample.sections
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.cabriole.decorator.LinearMarginDecoration
+import com.rubensousa.decorator.LinearMarginDecoration
 import com.rubensousa.lista.ListaAdapter
 import com.rubensousa.lista.ListaSectionViewHolder
 import com.rubensousa.lista.nested.ListaNestedSection

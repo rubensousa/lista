@@ -22,10 +22,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import io.cabriole.decorator.DecorationLookup
-import io.cabriole.decorator.GridSpanMarginDecoration
-import io.cabriole.decorator.LinearBoundsMarginDecoration
-import io.cabriole.decorator.LinearMarginDecoration
+import com.rubensousa.decorator.DecorationLookup
+import com.rubensousa.decorator.GridSpanMarginDecoration
+import com.rubensousa.decorator.LinearBoundsMarginDecoration
+import com.rubensousa.decorator.LinearMarginDecoration
 import com.rubensousa.lista.ListaAdapter
 import com.rubensousa.lista.ListaController
 import com.rubensousa.lista.ListaSpanLookup
@@ -86,8 +86,8 @@ class MainListController(
             R.dimen.default_decoration_size
         )
         return listOf(
-            GridSpanMarginDecoration(
-                margin = defaultDecorationSize,
+            GridSpanMarginDecoration.createHorizontal(
+                horizontalMargin = defaultDecorationSize,
                 gridLayoutManager = gridLayoutManager,
                 decorationLookup = object : DecorationLookup {
                     override fun shouldApplyDecoration(position: Int, itemCount: Int): Boolean {

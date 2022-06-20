@@ -25,7 +25,7 @@ import com.rubensousa.lista.sample.databinding.SectionCardBinding
 import com.rubensousa.lista.sample.model.CardModel
 
 class CardSection(
-    private val layout: Int = R.layout.section_card,
+    layout: Int = R.layout.section_card,
     private val showPosition: Boolean = true
 ) : ListaSection<CardModel>(layout) {
 
@@ -44,7 +44,7 @@ class CardSection(
             super.onBind(item)
             itemView.tag = item.id
             binding.cardTextView.isVisible = showPosition
-            binding.cardTextView.text = adapterPosition.toString()
+            binding.cardTextView.text = bindingAdapterPosition.toString()
         }
     }
 

@@ -76,20 +76,13 @@ abstract class ListaNestedSectionViewHolder<T>(
         }
     }
 
+    @CallSuper
     override fun onBind(item: T, payloads: List<Any>) {
         super.onBind(item, payloads)
-        // If you support partial changes, you can override this to avoid
-        // dispatching a full list update
-        bindList(item)
+        replaceList(item)
     }
 
-    @CallSuper
-    override fun onBind(item: T) {
-        super.onBind(item)
-        bindList(item)
-    }
-
-    fun bindList(item: T) {
+    fun replaceList(item: T) {
         updateAdapter(item)
         getRecyclerView().adapter = getAdapter()
         scrollStateManager.setScrollStateKey(getRecyclerView(), getScrollStateKey(item))

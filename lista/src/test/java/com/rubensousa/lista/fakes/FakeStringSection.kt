@@ -24,16 +24,14 @@ import com.rubensousa.lista.ListaSectionViewHolder
 class FakeStringSection(
     private var fakeView: View,
     layoutId: Int
-) : ListaSection<Any>(layoutId = layoutId) {
+) : ListaSection<String>(layoutId = layoutId) {
 
     override fun inflateLayout(parent: ViewGroup, layoutId: Int): View {
         return fakeView
     }
 
-    override fun onCreateViewHolder(view: View): ListaSectionViewHolder<Any> {
+    override fun onCreateViewHolder(view: View): ListaSectionViewHolder<String> {
         return FakeViewHolder(view)
     }
-
-    override fun isForItem(item: Any): Boolean = item is String
 
 }

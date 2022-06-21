@@ -20,10 +20,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.google.common.truth.Truth.assertThat
 import com.rubensousa.lista.fakes.FakeIntegerSection
 import com.rubensousa.lista.fakes.FakeStringSection
 import com.rubensousa.lista.fakes.FakeViewHolder
+import com.rubensousa.lista.section.ClassSectionRegistry
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
@@ -31,7 +34,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import java.lang.IllegalStateException
 
 @RunWith(MockitoJUnitRunner::class)
-class AdapterTests {
+class ListaAdapterTest {
 
     @Mock
     lateinit var fakeView: View
@@ -48,47 +51,41 @@ class AdapterTests {
             return oldItem == newItem
         }
     }
+    private lateinit var adapter: ListaAdapter<Any>
+
+    @Before
+    fun setup() {
+        adapter = ListaAdapter(diffItemCallback)
+    }
 
     @Test
-    fun testRegisteringSections() {
-        val adapter = ListaAdapter(diffItemCallback)
+    fun `adapter returns itemViewTypes from sections`() {
+        val integerSection = FakeIntegerSection(fakeView, layoutId = 4)
+        val stringSection = FakeStringSection(fakeView, layoutId = 5)
+        adapter.setSectionRegistry(ClassSectionRegistry().apply {
+            register(integerSection)
+            register(stringSection)
+        })
         adapter.setList(listOf(1, "Test"))
 
-        val integerSection = FakeIntegerSection(fakeView, layoutId = 4)
-        adapter.addSection(integerSection)
-
-        val stringSection = FakeStringSection(fakeView, layoutId = 5)
-        adapter.addSection(stringSection)
-
-        assertEquals(integerSection, adapter.getSection(integerSection.getItemViewType()))
-        assertEquals(stringSection, adapter.getSection(stringSection.getItemViewType()))
-
-        assertEquals(integerSection.getItemViewType(), adapter.getItemViewType(0))
-        assertEquals(stringSection.getItemViewType(), adapter.getItemViewType(1))
-
-
-        val sections: List<ListaSection<*>> = adapter.getSections()
-        assertEquals(true, sections.contains(integerSection as ListaSection<*>))
-        assertEquals(true, sections.contains(stringSection as ListaSection<*>))
-
-        adapter.removeSection(stringSection)
-        assertEquals(null, adapter.getSection(stringSection.getItemViewType()))
+        assertThat(adapter.getItemViewType(0)).isEqualTo(integerSection.getItemViewType())
+        assertThat(adapter.getItemViewType(1)).isEqualTo(stringSection.getItemViewType())
     }
 
     @Test(expected = IllegalStateException::class)
-    fun testMissingRegisteredSection() {
+    fun `exception is thrown when adapter does not have registered sections`() {
         val adapter = ListaAdapter(diffItemCallback)
         adapter.setList(listOf(1, 2, 3))
         adapter.getItemViewType(0)
     }
 
     @Test
-    fun testAdapterEvents() {
+    fun `adapter forwards events to the sections`() {
         val adapter = ListaAdapter(diffItemCallback)
+        adapter.setSectionRegistry(ClassSectionRegistry().apply {
+            register(FakeIntegerSection(fakeView, layoutId = 4))
+        })
         adapter.setList(listOf(0, 1, 2))
-
-        val fakeSection = FakeIntegerSection(fakeView, layoutId = 4)
-        adapter.addSection(fakeSection)
 
         val viewHolder = adapter.onCreateViewHolder(fakeViewGroup, 4) as FakeViewHolder
         setViewType(viewHolder, 4)
@@ -111,7 +108,7 @@ class AdapterTests {
         assertEquals(null, viewHolder.getItem())
 
         adapter.onBindViewHolder(viewHolder, 1, mutableListOf(2))
-        assertEquals(true, viewHolder.onBindWithPayloadCalled)
+        assertEquals(true, viewHolder.onBindCalled)
         assertEquals(1, viewHolder.getItem())
 
         adapter.onFailedToRecycleView(viewHolder)

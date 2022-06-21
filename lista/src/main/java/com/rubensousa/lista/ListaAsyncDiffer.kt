@@ -53,8 +53,8 @@ class ListaAsyncDiffer<T>(
         private val mainThreadExecutor: MainThreadExecutor by lazy { MainThreadExecutor() }
     }
 
-    private class MainThreadExecutor internal constructor() : Executor {
-        internal val handler = Handler(Looper.getMainLooper())
+    private class MainThreadExecutor : Executor {
+        val handler = Handler(Looper.getMainLooper())
         override fun execute(command: Runnable) {
             handler.post(command)
         }

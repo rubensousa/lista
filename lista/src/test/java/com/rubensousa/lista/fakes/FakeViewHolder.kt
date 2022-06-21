@@ -23,7 +23,6 @@ class FakeViewHolder<T : Any>(view: View) : ListaSectionViewHolder<T>(view) {
 
     var createdCalled = false
     var onBindCalled = false
-    var onBindWithPayloadCalled = false
     var onDetachedFromWindowCalled = false
     var onAttachedFromWindowCalled = false
     var onRecycledCalled = false
@@ -34,15 +33,9 @@ class FakeViewHolder<T : Any>(view: View) : ListaSectionViewHolder<T>(view) {
         createdCalled = true
     }
 
-    override fun onBind(item: T) {
-        super.onBind(item)
-        onBindCalled = true
-        onRecycledCalled = false
-    }
-
     override fun onBind(item: T, payloads: List<Any>) {
         super.onBind(item, payloads)
-        onBindWithPayloadCalled = true
+        onBindCalled = true
         onRecycledCalled = false
     }
 

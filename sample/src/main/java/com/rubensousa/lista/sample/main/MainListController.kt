@@ -37,6 +37,8 @@ import com.rubensousa.lista.sample.model.CardModel
 import com.rubensousa.lista.sample.model.OptionModel
 import com.rubensousa.lista.sample.model.SectionModel
 import com.rubensousa.lista.sample.sections.*
+import com.rubensousa.lista.section.ClassSectionRegistry
+import com.rubensousa.lista.section.ListaSectionRegistry
 
 class MainListController(
     private val fragment: Fragment,
@@ -60,21 +62,28 @@ class MainListController(
         return true
     }
 
-    override fun addSections(adapter: ListaAdapter<SectionModel>, recyclerView: RecyclerView) {
+    override fun createSectionRegistry(
+        adapter: ListaAdapter<SectionModel>,
+        recyclerView: RecyclerView
+    ): ListaSectionRegistry {
+        val registry = ClassSectionRegistry()
         val cardSection = CardSection(
             layout = R.layout.section_card_grid,
             showPosition = false
         )
-        adapter.addSection(OptionSection(this))
-        adapter.addSection(HeaderSection())
-        adapter.addSection(CardListSection(recyclerView.recycledViewPool, scrollStateManager))
-        adapter.addSection(cardSection)
+        registry.register(OptionSection(this))
+        registry.register(HeaderSection())
+        registry.register(CardListSection(recyclerView.recycledViewPool, scrollStateManager))
+        registry.register(cardSection)
 
         val layoutManager = recyclerView.layoutManager as GridLayoutManager
         val spanSizeLookup = ListaSpanLookup(adapter, defaultSpanSize = layoutManager.spanCount)
         spanSizeLookup.setSpanSizeForSection(cardSection, 1)
         layoutManager.spanSizeLookup = spanSizeLookup
+
+        return registry
     }
+
 
     override fun createItemDecorations(layoutManager: RecyclerView.LayoutManager)
             : List<RecyclerView.ItemDecoration> {

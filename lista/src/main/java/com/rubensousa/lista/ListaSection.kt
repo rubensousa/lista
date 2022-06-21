@@ -36,11 +36,6 @@ abstract class ListaSection<T>(@LayoutRes val layoutId: Int) {
     abstract fun onCreateViewHolder(view: View): ListaSectionViewHolder<T>
 
     /**
-     * @return true if this Section should be used to bind [item] or false otherwise
-     */
-    abstract fun isForItem(item: Any): Boolean
-
-    /**
      * @return the item view type for [ListaAdapter]. Must be unique per Adapter
      */
     open fun getItemViewType(): Int {
@@ -62,11 +57,6 @@ abstract class ListaSection<T>(@LayoutRes val layoutId: Int) {
         val holder = onCreateViewHolder(inflateLayout(parent, layoutId))
         holder.onCreated()
         return holder
-    }
-
-    @CallSuper
-    open fun onBindViewHolder(holder: ListaSectionViewHolder<T>, item: T) {
-        holder.onBind(item)
     }
 
     @CallSuper

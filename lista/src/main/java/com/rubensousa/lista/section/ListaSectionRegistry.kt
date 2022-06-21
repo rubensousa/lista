@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Rúben Sousa
+ * Copyright 2022 Rúben Sousa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.fakes
+package com.rubensousa.lista.section
 
-import android.view.View
-import android.view.ViewGroup
 import com.rubensousa.lista.ListaSection
-import com.rubensousa.lista.ListaSectionViewHolder
 
-class FakeIntegerSection(
-    private var fakeView: View,
-    layoutId: Int
-) : ListaSection<Int>(layoutId = layoutId) {
-
-    override fun inflateLayout(parent: ViewGroup, layoutId: Int): View {
-        return fakeView
-    }
-
-    override fun onCreateViewHolder(view: View): ListaSectionViewHolder<Int> {
-        return FakeViewHolder(view)
-    }
-
+/**
+ * A [ListaSectionRegistry] is responsible for finding a suitable [ListaSection]
+ * for a certain object or itemViewType
+ *
+ * Check [ClassSectionRegistry] and [ItemSectionRegistry] for some default implementations
+ */
+interface ListaSectionRegistry {
+    fun getSectionForItem(item: Any): ListaSection<*>?
+    fun getSectionForItemViewType(itemViewType: Int): ListaSection<*>?
 }

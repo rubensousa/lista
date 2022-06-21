@@ -33,19 +33,18 @@ class CardSection(
         return VH(view, showPosition)
     }
 
-    override fun isForItem(item: Any): Boolean = item is CardModel
-
     class VH(view: View, private val showPosition: Boolean) :
         ListaSectionViewHolder<CardModel>(view) {
 
         private val binding = SectionCardBinding.bind(view)
 
-        override fun onBind(item: CardModel) {
-            super.onBind(item)
+        override fun onBind(item: CardModel, payloads: List<Any>) {
+            super.onBind(item, payloads)
             itemView.tag = item.id
             binding.cardTextView.isVisible = showPosition
             binding.cardTextView.text = bindingAdapterPosition.toString()
         }
+
     }
 
 }

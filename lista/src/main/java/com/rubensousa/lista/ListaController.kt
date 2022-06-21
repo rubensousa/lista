@@ -23,6 +23,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.recyclerview.widget.*
+import com.rubensousa.lista.section.ListaSectionRegistry
 
 /**
  * A controller for a RecyclerView that displays a list of items of type [T].
@@ -68,7 +69,8 @@ abstract class ListaController<T : Any>(
         }
     }
 
-    abstract fun addSections(adapter: ListaAdapter<T>, recyclerView: RecyclerView)
+    abstract fun createSectionRegistry(adapter: ListaAdapter<T>, recyclerView: RecyclerView)
+            : ListaSectionRegistry
 
     abstract fun createDiffItemCallback(): DiffUtil.ItemCallback<T>
 
@@ -159,9 +161,9 @@ abstract class ListaController<T : Any>(
             recyclerView.setRecycledViewPool(recycledViewPool)
         }
 
-        // Add the delegates for this adapter.
+        // Add the sections for this adapter.
         // The LayoutManager needs to be set before, since some sections might need access to it
-        addSections(adapter, recyclerView)
+        adapter.setSectionRegistry(createSectionRegistry(adapter, recyclerView))
 
         // If the RecyclerView always fits the whole width/height, this should be true
         recyclerView.setHasFixedSize(hasFixedSize())

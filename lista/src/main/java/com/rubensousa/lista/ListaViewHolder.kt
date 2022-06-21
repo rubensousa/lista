@@ -16,44 +16,47 @@
 
 package com.rubensousa.lista
 
-import android.view.View
-import androidx.annotation.CallSuper
-import androidx.recyclerview.widget.RecyclerView
-
 /**
  * A ViewHolder for a [ListaSection].
- *
- * The item bound to this ViewHolder can be accessed via [getItem].
- * It'll be set in [onBind] and cleared in [onRecycled].
  */
-abstract class ListaSectionViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(itemView),
-    ListaViewHolder<T> {
-
-    private var item: T? = null
+interface ListaViewHolder<T> {
 
     /**
-     * @return the current item bound to this section
-     * or null if the item hasn't been bound or was recycled recently
+     * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onCreateViewHolder]
      */
-    fun getItem(): T? = item
+    fun onCreated() {}
 
     /**
      * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onBindViewHolder]
      *
      * @param item the item from the adapter that needs to be bound
-     * @param payloads a list for merged payloads. Can be empty
+     * @param payloads a non-empty list for merged payloads
      */
-    @CallSuper
-    override fun onBind(item: T, payloads: List<Any>) {
-        this.item = item
-    }
+    fun onBind(item: T, payloads: List<Any>) {}
 
     /**
      * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onViewRecycled]
      */
-    @CallSuper
-    override fun onRecycled() {
-        this.item = null
-    }
+    fun onRecycled() {}
+
+    /**
+     * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onFailedToRecycleView]
+     */
+    fun onFailedToRecycle(): Boolean = false
+
+    /**
+     * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onViewAttachedToWindow]
+     */
+    fun onAttachedToWindow() {}
+
+    /**
+     * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onViewDetachedFromWindow]
+     */
+    fun onDetachedFromWindow() {}
+
+    /**
+     * Implemented by [androidx.recyclerview.widget.RecyclerView.ViewHolder]
+     */
+    fun getItemViewType(): Int
 
 }

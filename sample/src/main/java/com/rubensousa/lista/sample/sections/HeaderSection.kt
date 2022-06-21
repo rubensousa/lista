@@ -26,15 +26,13 @@ import com.rubensousa.lista.sample.model.HeaderModel
 class HeaderSection : ListaSection<HeaderModel>(R.layout.section_header) {
 
     override fun onCreateViewHolder(view: View): ListaSectionViewHolder<HeaderModel> = VH(view)
-
-    override fun isForItem(item: Any): Boolean = item is HeaderModel
-
+    
     class VH(view: View) : ListaSectionViewHolder<HeaderModel>(view) {
 
         private val binding = SectionHeaderBinding.bind(view)
 
-        override fun onBind(item: HeaderModel) {
-            super.onBind(item)
+        override fun onBind(item: HeaderModel, payloads: List<Any>) {
+            super.onBind(item, payloads)
             binding.headerTitleTextView.setText(item.titleResource)
         }
 

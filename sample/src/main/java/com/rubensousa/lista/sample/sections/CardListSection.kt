@@ -28,6 +28,9 @@ import com.rubensousa.lista.nested.ListaScrollStateManager
 import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.databinding.SectionCardListBinding
 import com.rubensousa.lista.sample.model.CardListModel
+import com.rubensousa.lista.sample.model.CardModel
+import com.rubensousa.lista.section.ClassSectionRegistry
+import com.rubensousa.lista.section.ItemSectionRegistry
 
 class CardListSection(
     recycledViewPool: RecyclerView.RecycledViewPool,
@@ -42,8 +45,6 @@ class CardListSection(
         return VH(view, recycledViewPool, scrollStateManager)
     }
 
-    override fun isForItem(item: Any): Boolean = item is CardListModel
-
     class VH(
         view: View,
         recycledViewPool: RecyclerView.RecycledViewPool,
@@ -55,7 +56,9 @@ class CardListSection(
 
         override fun onCreated() {
             super.onCreated()
-            adapter.addSection(CardSection())
+            adapter.setSectionRegistry(ItemSectionRegistry().apply {
+                register(CardSection()) { item -> item is CardModel }
+            })
             val layoutManager = LinearLayoutManager(
                 binding.cardRecyclerView.context, RecyclerView.HORIZONTAL, false
             )
@@ -79,8 +82,8 @@ class CardListSection(
             adapter.submitList(item.items, applyDiffing = false)
         }
 
-        override fun onBind(item: CardListModel) {
-            super.onBind(item)
+        override fun onBind(item: CardListModel, payloads: List<Any>) {
+            super.onBind(item, payloads)
             itemView.tag = item.id
         }
 

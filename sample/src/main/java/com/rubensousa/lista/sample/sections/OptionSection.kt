@@ -35,9 +35,6 @@ class OptionSection(private val onOptionClickListener: OnOptionClickListener) :
         return VH(view, onOptionClickListener)
     }
 
-    override fun isForItem(item: Any): Boolean = item is OptionModel
-
-
     class VH(view: View, private val onOptionClickListener: OnOptionClickListener) :
         ListaSectionViewHolder<OptionModel>(view), View.OnClickListener {
 
@@ -48,8 +45,8 @@ class OptionSection(private val onOptionClickListener: OnOptionClickListener) :
             itemView.setOnClickListener(this)
         }
 
-        override fun onBind(item: OptionModel) {
-            super.onBind(item)
+        override fun onBind(item: OptionModel, payloads: List<Any>) {
+            super.onBind(item, payloads)
             binding.optionTitleTextView.setText(item.titleResource)
             if (item.subtitleResource == null) {
                 binding.optionSubtitleTextView.text = ""

@@ -28,7 +28,7 @@ import com.rubensousa.lista.ListaSection
 class MergeSectionRegistry(private val registries: List<ListaSectionRegistry>) :
     ListaSectionRegistry {
 
-    override fun getSectionForItem(item: Any): ListaSection<*>? {
+    override fun <T> getSectionForItem(item: T): ListaSection<*>? {
         for (registry in registries) {
             return registry.getSectionForItem(item) ?: continue
         }

@@ -205,7 +205,11 @@ abstract class ListaController<T : Any>(
             currentRecyclerView.itemAnimator?.isRunning(null)
             updateHandler.removeCallbacks(updateRunnable)
             // Insert the data into the adapter
-            adapter.submitList(items, applyDiffing)
+            if (applyDiffing) {
+                adapter.submit(items)
+            }else {
+                adapter.submitNow(items)
+            }
             // Clear any pending items
             pendingItems = null
             pendingDiffing = false

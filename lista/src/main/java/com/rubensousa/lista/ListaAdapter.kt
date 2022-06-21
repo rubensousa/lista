@@ -20,7 +20,6 @@ import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.recyclerview.widget.*
 import com.rubensousa.lista.section.ClassSectionRegistry
-import com.rubensousa.lista.section.ItemSectionRegistry
 import com.rubensousa.lista.section.ListaSectionRegistry
 import java.util.*
 
@@ -36,7 +35,7 @@ import java.util.*
  * When the adapter contents are changed through [submitList],
  * [ListaAsyncDiffer] kicks-in to calculate the diff between the previous list and the new list.
  */
-open class ListaAdapter<T : Any>(
+open class ListaAdapter<T>(
     diffItemCallback: DiffUtil.ItemCallback<T>
 ) : RecyclerView.Adapter<ListaSectionViewHolder<T>>() {
 
@@ -60,7 +59,7 @@ open class ListaAdapter<T : Any>(
         return sectionRegistry.getSectionForItem(item)?.getItemViewType()
             ?: throw IllegalStateException(
                 "Section not found for position: " + position
-                        + "\nItem found: " + item.javaClass.simpleName
+                        + "\nItem found: " + item!!::class.java.simpleName
             )
     }
 
@@ -103,24 +102,33 @@ open class ListaAdapter<T : Any>(
     fun getItemAt(position: Int): T = differ.getCurrentList()[position]
 
     fun clear() {
-        submitList(listOf())
+        submit(listOf())
     }
 
     /**
      * Replaces the items of the adapter.
-     * If you're using this inside a nested RecyclerView, use [applyDiffing] as false
-     * to avoid triggering unnecessary work, since you can set the items
-     * before you bind the adapter.
+     *
+     * This will dispatch the new list in another thread
+     * and calculate a diff of the old list and the new one
      *
      * @param items the new items to be applied to the adapter
-     * @param applyDiffing true if DiffUtil should be used for fine grained updates, false otherwise
      */
-    open fun <V : T> submitList(items: List<V>, applyDiffing: Boolean = true) {
-        if (applyDiffing) {
-            differ.submitList(items)
-        } else {
-            differ.submitImmediately(this, items)
-        }
+    fun <V : T> submit(items: List<V>) {
+        differ.submitList(items)
+    }
+
+    /**
+     * Replaces the items of the adapter.
+     * Use this when you're inside a nested RecyclerView to avoid triggering unnecessary work,
+     * since you can set the items before you bind the adapter.
+     *
+     * If you want to get the appropriate updates by diffing the old list and the new one,
+     * use [submit]
+     *
+     * @param items the new items to be applied to the adapter
+     */
+    fun <V : T> submitNow(items: List<V>) {
+        differ.submitNow(this, items)
     }
 
     /**
@@ -144,8 +152,8 @@ open class ListaAdapter<T : Any>(
         differ.clearListListeners()
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun <V : T> requireSection(holder: ListaSectionViewHolder<*>): ListaSection<V> {
+        @Suppress("UNCHECKED_CAST")
         return (sectionRegistry.getSectionForItemViewType(holder.itemViewType)
             ?: throw IllegalStateException(
                 "No section found for ViewHolder at ${holder.absoluteAdapterPosition} " +
@@ -153,8 +161,8 @@ open class ListaAdapter<T : Any>(
             )) as ListaSection<V>
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun <V : T> requireSection(itemViewType: Int): ListaSection<V> {
+        @Suppress("UNCHECKED_CAST")
         return (sectionRegistry.getSectionForItemViewType(itemViewType)
             ?: throw IllegalStateException(
                 "No section found for itemViewType: $itemViewType"

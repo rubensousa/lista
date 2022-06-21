@@ -38,9 +38,9 @@ class ItemSectionRegistry : ListaSectionRegistry {
         return sectionsPerViewType[itemViewType]
     }
 
-    override fun getSectionForItem(item: Any): ListaSection<*>? {
+    override fun <T> getSectionForItem(item: T): ListaSection<*>? {
         sectionMatchers.keys.forEach { matcher ->
-            if (matcher(item)) {
+            if (matcher(item as Any)) {
                 return sectionMatchers[matcher]
             }
         }

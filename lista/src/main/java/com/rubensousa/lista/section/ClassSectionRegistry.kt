@@ -39,8 +39,8 @@ class ClassSectionRegistry : ListaSectionRegistry {
         registerForClass(section, T::class.java)
     }
 
-    override fun getSectionForItem(item: Any): ListaSection<*>? {
-        return sections[item::class.java]
+    override fun <T> getSectionForItem(item: T): ListaSection<*>? {
+        return sections[item!!::class.java]
     }
 
     override fun getSectionForItemViewType(itemViewType: Int): ListaSection<*>? {

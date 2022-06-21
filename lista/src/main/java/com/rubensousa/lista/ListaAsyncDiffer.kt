@@ -91,7 +91,7 @@ class ListaAsyncDiffer<T>(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun submitImmediately(adapter: RecyclerView.Adapter<*>, newList: List<T>) {
+    fun submitNow(adapter: RecyclerView.Adapter<*>, newList: List<T>) {
         // incrementing generation means any currently-running diffs are discarded when they finish
         maxScheduledGeneration++
         if (newList === list) {

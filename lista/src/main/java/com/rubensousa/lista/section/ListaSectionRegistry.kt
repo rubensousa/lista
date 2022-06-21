@@ -16,6 +16,7 @@
 
 package com.rubensousa.lista.section
 
+import androidx.annotation.NonNull
 import com.rubensousa.lista.ListaSection
 
 /**
@@ -25,6 +26,6 @@ import com.rubensousa.lista.ListaSection
  * Check [ClassSectionRegistry] and [ItemSectionRegistry] for some default implementations
  */
 interface ListaSectionRegistry {
-    fun getSectionForItem(item: Any): ListaSection<*>?
+    fun <T> getSectionForItem(@NonNull item: T): ListaSection<*>?
     fun getSectionForItemViewType(itemViewType: Int): ListaSection<*>?
 }

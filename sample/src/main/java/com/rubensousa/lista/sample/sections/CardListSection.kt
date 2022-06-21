@@ -79,7 +79,7 @@ class CardListSection(
         }
 
         override fun updateAdapter(item: CardListModel) {
-            adapter.submitList(item.items, applyDiffing = false)
+            adapter.submitNow(item.items)
         }
 
         override fun onBind(item: CardListModel, payloads: List<Any>) {

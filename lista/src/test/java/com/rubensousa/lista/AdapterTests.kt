@@ -67,7 +67,7 @@ class AdapterTests {
         assertEquals(stringSection.getItemViewType(), adapter.getItemViewType(1))
 
 
-        val sections: List<ListaSection<Any>> = adapter.getSections()
+        val sections: List<ListaSection<*>> = adapter.getSections()
         assertEquals(true, sections.contains(integerSection as ListaSection<*>))
         assertEquals(true, sections.contains(stringSection as ListaSection<*>))
 

@@ -17,32 +17,48 @@
 package com.rubensousa.lista
 
 import android.view.ViewGroup
-import androidx.collection.SparseArrayCompat
 
 /**
  * Delegates ViewHolder creation and binding for [ListaAdapter]
  */
 class ListaSectionBinder<T : Any> {
 
-    private val sections: SparseArrayCompat<ListaSection<T>> = SparseArrayCompat()
+    private val sections = LinkedHashMap<Int, ListaSection<*>>()
 
     fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListaSectionViewHolder<T> {
         return requireSection<T>(viewType).onCreateViewHolder(parent)
     }
 
     fun onBindViewHolder(holder: ListaSectionViewHolder<T>, item: T) {
-        requireSection<T>(holder.itemViewType).onBindViewHolder(holder, item)
+        requireSection<T>(holder).onBindViewHolder(holder, item)
     }
 
     fun onBindViewHolder(holder: ListaSectionViewHolder<T>, item: T, payloads: List<Any>) {
-        requireSection<T>(holder.itemViewType).onBindViewHolder(holder, item, payloads)
+        requireSection<T>(holder).onBindViewHolder(holder, item, payloads)
+    }
+
+    fun onViewRecycled(holder: ListaSectionViewHolder<T>) {
+        requireSection<T>(holder).onViewRecycled(holder)
+    }
+
+    fun onViewAttachedToWindow(holder: ListaSectionViewHolder<T>) {
+        requireSection<T>(holder).onViewAttachedToWindow(holder)
+    }
+
+    fun onViewDetachedFromWindow(holder: ListaSectionViewHolder<T>) {
+        requireSection<T>(holder).onViewDetachedFromWindow(holder)
+    }
+
+    fun onFailedToRecycleView(holder: ListaSectionViewHolder<T>): Boolean {
+        return requireSection<T>(holder).onFailedToRecycleView(holder)
     }
 
     fun getItemViewType(item: T, position: Int): Int {
-        for (i in 0 until sections.size()) {
-            val section = sections.valueAt(i)
+        sections.entries.forEach { entry ->
+            val section = entry.value
+            val itemViewType = entry.key
             if (section.isForItem(item)) {
-                return section.getItemViewType()
+                return itemViewType
             }
         }
         throw IllegalStateException(
@@ -51,9 +67,8 @@ class ListaSectionBinder<T : Any> {
         )
     }
 
-    @Suppress("UNCHECKED_CAST")
     fun <V : T> addSection(section: ListaSection<V>) {
-        sections.put(section.getItemViewType(), section as ListaSection<T>)
+        sections[section.getItemViewType()] = section
     }
 
     fun <V : T> removeSection(section: ListaSection<V>) {
@@ -66,15 +81,21 @@ class ListaSectionBinder<T : Any> {
 
     @Suppress("UNCHECKED_CAST")
     fun <V : T> getSection(viewType: Int): ListaSection<V>? {
-        return sections.get(viewType) as ListaSection<V>?
+        return sections[viewType] as ListaSection<V>?
     }
 
-    fun getSections(): List<ListaSection<T>> {
-        val output = arrayListOf<ListaSection<T>>()
-        for (i in 0 until sections.size()) {
-            output.add(sections.valueAt(i))
-        }
+    fun getSections(): List<ListaSection<*>> {
+        val output = arrayListOf<ListaSection<*>>()
+        output.addAll(sections.values)
         return output
+    }
+
+    private fun <V : T> requireSection(holder: ListaSectionViewHolder<*>): ListaSection<V> {
+        return getSection(holder.itemViewType)
+            ?: throw IllegalStateException(
+                "No section found for ViewHolder at ${holder.absoluteAdapterPosition} " +
+                        "and viewType = ${holder.itemViewType}"
+            )
     }
 
     private fun <V : T> requireSection(viewType: Int): ListaSection<V> {

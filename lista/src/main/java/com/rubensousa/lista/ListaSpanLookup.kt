@@ -1,6 +1,5 @@
 package com.rubensousa.lista
 
-import androidx.collection.SparseArrayCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -13,7 +12,7 @@ class ListaSpanLookup(
     private var defaultSpanSize: Int = 1
 ) : GridLayoutManager.SpanSizeLookup() {
 
-    private val spanSizes: SparseArrayCompat<Int> = SparseArrayCompat()
+    private val spanSizes = LinkedHashMap<Int, Int>()
 
     fun setDefaultSpanSize(size: Int) {
         defaultSpanSize = size
@@ -24,7 +23,7 @@ class ListaSpanLookup(
     }
 
     fun setSpanSizeForItemViewType(itemViewType: Int, size: Int) {
-        spanSizes.put(itemViewType, size)
+        spanSizes[itemViewType] = size
     }
 
     fun removeSpanSizeForItemViewType(itemViewType: Int) {

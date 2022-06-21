@@ -76,9 +76,7 @@ class ListaAsyncDiffer<T>(
      * Get the current List - any diffing to present this list has already been computed and
      * dispatched via the ListUpdateCallback.
      *
-     *
      * If a `null` List, or no List has been submitted, an empty list will be returned.
-     *
      *
      * The returned list may not be mutated - mutations to content must be done through
      * [submitList]

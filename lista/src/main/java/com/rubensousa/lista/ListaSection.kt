@@ -19,6 +19,7 @@ package com.rubensousa.lista
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 
 /**
@@ -56,18 +57,40 @@ abstract class ListaSection<T>(@LayoutRes val layoutId: Int) {
     /**
      * @return the ViewHolder to be used by this Section
      */
+    @CallSuper
     open fun onCreateViewHolder(parent: ViewGroup): ListaSectionViewHolder<T> {
         val holder = onCreateViewHolder(inflateLayout(parent, layoutId))
         holder.onCreated()
         return holder
     }
 
+    @CallSuper
     open fun onBindViewHolder(holder: ListaSectionViewHolder<T>, item: T) {
         holder.onBind(item)
     }
 
+    @CallSuper
     open fun onBindViewHolder(holder: ListaSectionViewHolder<T>, item: T, payloads: List<Any>) {
         holder.onBind(item, payloads)
+    }
+
+    @CallSuper
+    open fun onViewRecycled(holder: ListaSectionViewHolder<T>) {
+        holder.onRecycled()
+    }
+
+    @CallSuper
+    open fun onViewAttachedToWindow(holder: ListaSectionViewHolder<T>) {
+        holder.onAttachedToWindow()
+    }
+
+    @CallSuper
+    open fun onViewDetachedFromWindow(holder: ListaSectionViewHolder<T>) {
+        holder.onDetachedFromWindow()
+    }
+
+    open fun onFailedToRecycleView(holder: ListaSectionViewHolder<T>): Boolean {
+        return holder.onFailedToRecycle()
     }
 
 }

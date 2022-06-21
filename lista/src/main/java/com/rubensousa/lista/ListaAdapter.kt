@@ -70,43 +70,39 @@ open class ListaAdapter<T : Any>(
         }
     }
 
-    override fun getItemCount(): Int {
-        return differ.getCurrentList().size
-    }
-
     override fun onViewRecycled(holder: ListaSectionViewHolder<T>) {
-        super.onViewRecycled(holder)
-        holder.onRecycled()
+        sectionBinder.onViewRecycled(holder)
     }
 
     override fun onViewAttachedToWindow(holder: ListaSectionViewHolder<T>) {
-        super.onViewAttachedToWindow(holder)
-        holder.onAttachedToWindow()
+        sectionBinder.onViewAttachedToWindow(holder)
     }
 
     override fun onViewDetachedFromWindow(holder: ListaSectionViewHolder<T>) {
-        super.onViewDetachedFromWindow(holder)
-        holder.onDetachedFromWindow()
+        sectionBinder.onViewDetachedFromWindow(holder)
     }
 
     override fun onFailedToRecycleView(holder: ListaSectionViewHolder<T>): Boolean {
-        return holder.onFailedToRecycle()
+        return sectionBinder.onFailedToRecycleView(holder)
+    }
+
+    override fun getItemCount(): Int {
+        return differ.getCurrentList().size
     }
 
     open fun <V : T> addSection(section: ListaSection<V>) {
         sectionBinder.addSection(section)
     }
 
-    @Suppress("UNCHECKED_CAST")
     open fun <V : T> removeSection(section: ListaSection<V>) {
-        sectionBinder.removeSection(section as ListaSection<T>)
+        sectionBinder.removeSection(section)
     }
 
     fun removeAllSections() {
         sectionBinder.removeAllSections()
     }
 
-    fun getSections(): List<ListaSection<T>> {
+    fun getSections(): List<ListaSection<*>> {
         return sectionBinder.getSections()
     }
 
@@ -122,18 +118,18 @@ open class ListaAdapter<T : Any>(
 
     /**
      * Replaces the items of the adapter.
-     * If you're using this inside a nested RecyclerView, consider using [applyDiffing] as false,
-     * to avoid triggering unnecessary animations
+     * If you're using this inside a nested RecyclerView, use [applyDiffing] as false
+     * to avoid triggering unnecessary work, since you can set the items
+     * before you bind the adapter.
      *
      * @param items the new items to be applied to the adapter
      * @param applyDiffing true if DiffUtil should be used for fine grained updates, false otherwise
      */
-    @Suppress("UNCHECKED_CAST")
     open fun <V : T> submitList(items: List<V>, applyDiffing: Boolean = true) {
         if (applyDiffing) {
-            differ.submitList(items as List<T>)
+            differ.submitList(items)
         } else {
-            differ.submitImmediately(this, items as List<T>)
+            differ.submitImmediately(this, items)
         }
     }
 
@@ -158,9 +154,7 @@ open class ListaAdapter<T : Any>(
         differ.clearListListeners()
     }
 
-    fun getSectionBinder() = sectionBinder
-
-    inner class AdapterUpdateCallback : ListUpdateCallback {
+    private inner class AdapterUpdateCallback : ListUpdateCallback {
         override fun onChanged(position: Int, count: Int, payload: Any?) {
             notifyItemRangeChanged(position, count, payload)
         }

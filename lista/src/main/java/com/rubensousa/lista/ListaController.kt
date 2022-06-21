@@ -129,6 +129,7 @@ abstract class ListaController<T : Any>(
 
         adapter.clearOnListChangedListeners()
         recyclerView?.layoutManager = null
+        recyclerView?.adapter = null
         recyclerView = null
     }
 

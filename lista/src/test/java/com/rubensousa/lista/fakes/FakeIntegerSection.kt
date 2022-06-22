@@ -19,18 +19,17 @@ package com.rubensousa.lista.fakes
 import android.view.View
 import android.view.ViewGroup
 import com.rubensousa.lista.ListaSection
-import com.rubensousa.lista.ListaSectionViewHolder
 
 class FakeIntegerSection(
     private var fakeView: View,
     layoutId: Int
-) : ListaSection<Int>(layoutId = layoutId) {
+) : ListaSection<Int, FakeViewHolder<Int>>(layoutId = layoutId) {
 
     override fun inflateLayout(parent: ViewGroup, layoutId: Int): View {
         return fakeView
     }
 
-    override fun onCreateViewHolder(view: View): ListaSectionViewHolder<Int> {
+    override fun onCreateViewHolder(view: View): FakeViewHolder<Int> {
         return FakeViewHolder(view)
     }
 

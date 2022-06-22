@@ -28,12 +28,14 @@ import androidx.annotation.LayoutRes
  * Each section needs to provide a unique view type in [getItemViewType],
  * which is [layoutId] by default.
  */
-abstract class ListaSection<T>(@LayoutRes val layoutId: Int) {
+abstract class ListaSection<T, VH : ListaSectionViewHolder<T>>(
+    @LayoutRes val layoutId: Int
+) {
 
     /**
      * @return the ViewHolder to be used by this Section
      */
-    abstract fun onCreateViewHolder(view: View): ListaSectionViewHolder<T>
+    abstract fun onCreateViewHolder(view: View): VH
 
     /**
      * @return the item view type for [ListaAdapter]. Must be unique per Adapter
@@ -52,34 +54,32 @@ abstract class ListaSection<T>(@LayoutRes val layoutId: Int) {
     /**
      * @return the ViewHolder to be used by this Section
      */
-    @CallSuper
-    open fun onCreateViewHolder(parent: ViewGroup): ListaSectionViewHolder<T> {
-        val holder = onCreateViewHolder(inflateLayout(parent, layoutId))
-        holder.onCreated()
-        return holder
+    open fun onCreateViewHolder(parent: ViewGroup): VH {
+        return onCreateViewHolder(inflateLayout(parent, layoutId))
     }
 
     @CallSuper
-    open fun onBindViewHolder(holder: ListaSectionViewHolder<T>, item: T, payloads: List<Any>) {
+    open fun onBindViewHolder(holder: VH, item: T, payloads: List<Any>) {
         holder.onBind(item, payloads)
     }
 
     @CallSuper
-    open fun onViewRecycled(holder: ListaSectionViewHolder<T>) {
+    open fun onViewRecycled(holder: VH) {
         holder.onRecycled()
     }
 
     @CallSuper
-    open fun onViewAttachedToWindow(holder: ListaSectionViewHolder<T>) {
+    open fun onViewAttachedToWindow(holder: VH) {
         holder.onAttachedToWindow()
     }
 
     @CallSuper
-    open fun onViewDetachedFromWindow(holder: ListaSectionViewHolder<T>) {
+    open fun onViewDetachedFromWindow(holder: VH) {
         holder.onDetachedFromWindow()
     }
 
-    open fun onFailedToRecycleView(holder: ListaSectionViewHolder<T>): Boolean {
+    @CallSuper
+    open fun onFailedToRecycleView(holder: VH): Boolean {
         return holder.onFailedToRecycle()
     }
 

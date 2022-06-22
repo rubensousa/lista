@@ -16,6 +16,7 @@
 package com.rubensousa.lista.section
 
 import com.rubensousa.lista.ListaSection
+import com.rubensousa.lista.ListaSectionViewHolder
 
 /**
  * A [ListaSectionRegistry] that matches a certain [ListaSection]
@@ -23,28 +24,22 @@ import com.rubensousa.lista.ListaSection
  *
  * Use [register] to add a [ListaSection] bound to the its type.
  *
- * Use [registerForClass] or [registerForClass]
  */
-class ClassSectionRegistry : ListaSectionRegistry {
+open class ClassSectionRegistry : ListaSectionRegistry() {
 
-    private val sections = LinkedHashMap<Class<*>, ListaSection<*>>()
-    private val sectionsPerViewType = LinkedHashMap<Int, ListaSection<*>>()
+    private val sections = LinkedHashMap<Class<*>, ListaSection<*, *>>()
 
-    fun registerForClass(section: ListaSection<*>, clazz: Class<*>) {
-        sections[clazz] = section
-        sectionsPerViewType[section.getItemViewType()] = section
-    }
-
-    inline fun <reified T> register(section: ListaSection<T>) {
+    inline fun <reified T, VH: ListaSectionViewHolder<T>> register(section: ListaSection<T, VH>) {
         registerForClass(section, T::class.java)
     }
 
-    override fun <T> getSectionForItem(item: T): ListaSection<*>? {
-        return sections[item!!::class.java]
+    fun registerForClass(section: ListaSection<*, *>, clazz: Class<*>) {
+        sections[clazz] = section
+        registerForViewType(section)
     }
 
-    override fun getSectionForItemViewType(itemViewType: Int): ListaSection<*>? {
-        return sectionsPerViewType[itemViewType]
+    override fun <T> getSectionForItem(item: T): ListaSection<*, *>? {
+        return sections[item!!::class.java]
     }
 
 }

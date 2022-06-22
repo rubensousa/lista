@@ -19,6 +19,7 @@ package com.rubensousa.lista.nested
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import com.rubensousa.lista.ListaSection
+import com.rubensousa.lista.ListaSectionViewHolder
 
 /**
  * A [ListaSection] for nested RecyclerViews.
@@ -30,11 +31,11 @@ import com.rubensousa.lista.ListaSection
  *
  * @param scrollStateManager a shared [ListaScrollStateManager] to persist the scroll state
  */
-abstract class ListaNestedSection<T>(
+abstract class ListaNestedSection<T, VH: ListaSectionViewHolder<T>>(
     @LayoutRes layoutId: Int,
     protected val recycledViewPool: RecyclerView.RecycledViewPool = ListaUnboundedViewPool(),
     protected val scrollStateManager: ListaScrollStateManager = ListaScrollStateManager()
-) : ListaSection<T>(layoutId) {
+) : ListaSection<T, VH>(layoutId) {
 
     /**
      * Clears the scroll state of [scrollStateManager].

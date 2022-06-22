@@ -69,8 +69,10 @@ abstract class ListaController<T : Any>(
         }
     }
 
-    abstract fun createSectionRegistry(adapter: ListaAdapter<T>, recyclerView: RecyclerView)
-            : ListaSectionRegistry
+    abstract fun createSectionRegistry(
+        adapter: ListaAdapter<T>,
+        recyclerView: RecyclerView
+    ): ListaSectionRegistry
 
     abstract fun createDiffItemCallback(): DiffUtil.ItemCallback<T>
 
@@ -207,7 +209,7 @@ abstract class ListaController<T : Any>(
             // Insert the data into the adapter
             if (applyDiffing) {
                 adapter.submit(items)
-            }else {
+            } else {
                 adapter.submitNow(items)
             }
             // Clear any pending items

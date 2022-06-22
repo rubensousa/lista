@@ -18,14 +18,26 @@ package com.rubensousa.lista.section
 
 import androidx.annotation.NonNull
 import com.rubensousa.lista.ListaSection
-
 /**
  * A [ListaSectionRegistry] is responsible for finding a suitable [ListaSection]
- * for a certain object or itemViewType
+ * for a certain object and itemViewType
  *
- * Check [ClassSectionRegistry] and [ItemSectionRegistry] for some default implementations
+ * Call [registerForViewType] in your child classes to register your section
+ *
+ * Check [ClassSectionRegistry] and [ItemSectionRegistry] for some default implementations.
  */
-interface ListaSectionRegistry {
-    fun <T> getSectionForItem(@NonNull item: T): ListaSection<*>?
-    fun getSectionForItemViewType(itemViewType: Int): ListaSection<*>?
+abstract class ListaSectionRegistry {
+
+    private val sectionsPerViewType = LinkedHashMap<Int, ListaSection<*, *>>()
+
+    abstract fun <T> getSectionForItem(@NonNull item: T): ListaSection<*, *>?
+
+    open fun getSectionForItemViewType(itemViewType: Int): ListaSection<*, *>? {
+        return sectionsPerViewType[itemViewType]
+    }
+
+    protected fun registerForViewType(section: ListaSection<*, *>) {
+        sectionsPerViewType[section.getItemViewType()] = section
+    }
+
 }

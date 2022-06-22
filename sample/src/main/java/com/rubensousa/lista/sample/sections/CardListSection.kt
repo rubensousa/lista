@@ -21,27 +21,24 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rubensousa.decorator.LinearMarginDecoration
 import com.rubensousa.lista.ListaAdapter
-import com.rubensousa.lista.ListaSectionViewHolder
 import com.rubensousa.lista.nested.ListaNestedSection
 import com.rubensousa.lista.nested.ListaNestedSectionViewHolder
 import com.rubensousa.lista.nested.ListaScrollStateManager
 import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.databinding.SectionCardListBinding
 import com.rubensousa.lista.sample.model.CardListModel
-import com.rubensousa.lista.sample.model.CardModel
-import com.rubensousa.lista.section.ClassSectionRegistry
 import com.rubensousa.lista.section.ItemSectionRegistry
 
 class CardListSection(
     recycledViewPool: RecyclerView.RecycledViewPool,
     scrollStateManager: ListaScrollStateManager
-) : ListaNestedSection<CardListModel>(
+) : ListaNestedSection<CardListModel, CardListSection.VH>(
     layoutId = R.layout.section_card_list,
     recycledViewPool = recycledViewPool,
     scrollStateManager = scrollStateManager
 ) {
 
-    override fun onCreateViewHolder(view: View): ListaSectionViewHolder<CardListModel> {
+    override fun onCreateViewHolder(view: View): VH {
         return VH(view, recycledViewPool, scrollStateManager)
     }
 
@@ -57,7 +54,7 @@ class CardListSection(
         override fun onCreated() {
             super.onCreated()
             adapter.setSectionRegistry(ItemSectionRegistry().apply {
-                register(CardSection()) { item -> item is CardModel }
+                registerForInstance(CardSection())
             })
             val layoutManager = LinearLayoutManager(
                 binding.cardRecyclerView.context, RecyclerView.HORIZONTAL, false

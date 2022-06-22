@@ -25,17 +25,17 @@ import com.rubensousa.lista.sample.databinding.SectionOptionBinding
 import com.rubensousa.lista.sample.model.OptionModel
 
 class OptionSection(private val onOptionClickListener: OnOptionClickListener) :
-    ListaSection<OptionModel>(R.layout.section_option) {
+    ListaSection<OptionModel, OptionSection.ViewHolder>(R.layout.section_option) {
 
     interface OnOptionClickListener {
         fun onOptionClicked(optionModel: OptionModel)
     }
 
-    override fun onCreateViewHolder(view: View): ListaSectionViewHolder<OptionModel> {
-        return VH(view, onOptionClickListener)
+    override fun onCreateViewHolder(view: View): ViewHolder {
+        return ViewHolder(view, onOptionClickListener)
     }
 
-    class VH(view: View, private val onOptionClickListener: OnOptionClickListener) :
+    class ViewHolder(view: View, private val onOptionClickListener: OnOptionClickListener) :
         ListaSectionViewHolder<OptionModel>(view), View.OnClickListener {
 
         private val binding = SectionOptionBinding.bind(view)

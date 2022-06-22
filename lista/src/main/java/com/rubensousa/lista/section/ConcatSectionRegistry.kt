@@ -19,23 +19,23 @@ package com.rubensousa.lista.section
 import com.rubensousa.lista.ListaSection
 
 /**
- * Similarly to ConcatAdapter, this [MergeSectionRegistry] allows you
+ * Similarly to ConcatAdapter, this [ConcatSectionRegistry] allows you
  * to register multiple [ListaSectionRegistry] to combine them.
  *
  * This is useful when you have different criteria to match certain items
  * or when you need a fallback to a certain position
  */
-class MergeSectionRegistry(private val registries: List<ListaSectionRegistry>) :
-    ListaSectionRegistry {
+class ConcatSectionRegistry(private val registries: List<ListaSectionRegistry>) :
+    ListaSectionRegistry() {
 
-    override fun <T> getSectionForItem(item: T): ListaSection<*>? {
+    override fun <T> getSectionForItem(item: T): ListaSection<*, *>? {
         for (registry in registries) {
             return registry.getSectionForItem(item) ?: continue
         }
         return null
     }
 
-    override fun getSectionForItemViewType(itemViewType: Int): ListaSection<*>? {
+    override fun getSectionForItemViewType(itemViewType: Int): ListaSection<*, *>? {
         for (registry in registries) {
             return registry.getSectionForItemViewType(itemViewType) ?: continue
         }

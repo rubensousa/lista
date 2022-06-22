@@ -23,22 +23,26 @@ typealias SectionItemMatcher = (item: Any) -> Boolean
 /**
  * A [ListaSectionRegistry] that matches a certain [ListaSection]
  * based on an actual object instance via [SectionItemMatcher]
+ *
+ * [registerForInstance] will register a [ListaSection] for an object instance of type T
+ *
+ * [registerForMatcher] will register a [ListaSection]
+ * for a [SectionItemMatcher] for maximum flexibility
  */
-class ItemSectionRegistry : ListaSectionRegistry {
+open class ItemSectionRegistry : ListaSectionRegistry() {
 
-    private val sectionsPerViewType = LinkedHashMap<Int, ListaSection<*>>()
-    private val sectionMatchers = LinkedHashMap<SectionItemMatcher, ListaSection<*>>()
+    private val sectionMatchers = LinkedHashMap<SectionItemMatcher, ListaSection<*, *>>()
 
-    fun register(section: ListaSection<*>, itemMatcher: SectionItemMatcher) {
+    inline fun <reified T> registerForInstance(section: ListaSection<T, *>) {
+        registerForMatcher(section) { item -> item is T }
+    }
+
+    fun registerForMatcher(section: ListaSection<*, *>, itemMatcher: SectionItemMatcher) {
         sectionMatchers[itemMatcher] = section
-        sectionsPerViewType[section.getItemViewType()] = section
+        registerForViewType(section)
     }
 
-    override fun getSectionForItemViewType(itemViewType: Int): ListaSection<*>? {
-        return sectionsPerViewType[itemViewType]
-    }
-
-    override fun <T> getSectionForItem(item: T): ListaSection<*>? {
+    override fun <T> getSectionForItem(item: T): ListaSection<*, *>? {
         sectionMatchers.keys.forEach { matcher ->
             if (matcher(item as Any)) {
                 return sectionMatchers[matcher]
@@ -47,6 +51,4 @@ class ItemSectionRegistry : ListaSectionRegistry {
         return null
     }
 
-
 }
-

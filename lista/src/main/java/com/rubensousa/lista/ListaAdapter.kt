@@ -36,12 +36,13 @@ import java.util.*
  * [ListaAsyncDiffer] kicks-in to calculate the diff between the previous list and the new list.
  */
 open class ListaAdapter<T>(
-    diffItemCallback: DiffUtil.ItemCallback<T>
+    diffItemCallback: DiffUtil.ItemCallback<T>,
+    defaultSectionRegistry: ListaSectionRegistry = ClassSectionRegistry()
 ) : RecyclerView.Adapter<ListaSectionViewHolder<T>>() {
 
     private val differ: ListaAsyncDiffer<T>
     private val updateCallback: AdapterUpdateCallback = AdapterUpdateCallback()
-    private var sectionRegistry: ListaSectionRegistry = ClassSectionRegistry()
+    private var sectionRegistry: ListaSectionRegistry = defaultSectionRegistry
 
     init {
         differ = ListaAsyncDiffer(
@@ -51,7 +52,10 @@ open class ListaAdapter<T>(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListaSectionViewHolder<T> {
-        return requireSection<T>(viewType).onCreateViewHolder(parent)
+        return getSection(viewType).onCreateViewHolder(parent)
+            .also { holder: ListaSectionViewHolder<T> ->
+                holder.onCreated()
+            }
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -64,31 +68,29 @@ open class ListaAdapter<T>(
     }
 
     override fun onBindViewHolder(holder: ListaSectionViewHolder<T>, position: Int) {
-        requireSection<T>(holder).onBindViewHolder(
-            holder, getItemAt(position), Collections.emptyList()
-        )
+        getSection(holder).onBindViewHolder(holder, getItemAt(position), Collections.emptyList())
     }
 
     override fun onBindViewHolder(
         holder: ListaSectionViewHolder<T>, position: Int, payloads: MutableList<Any>
     ) {
-        requireSection<T>(holder).onBindViewHolder(holder, getItemAt(position), payloads)
+        getSection(holder).onBindViewHolder(holder, getItemAt(position), payloads)
     }
 
     override fun onViewRecycled(holder: ListaSectionViewHolder<T>) {
-        requireSection<T>(holder).onViewRecycled(holder)
+        getSection(holder).onViewRecycled(holder)
     }
 
     override fun onViewAttachedToWindow(holder: ListaSectionViewHolder<T>) {
-        requireSection<T>(holder).onViewAttachedToWindow(holder)
+        getSection(holder).onViewAttachedToWindow(holder)
     }
 
     override fun onViewDetachedFromWindow(holder: ListaSectionViewHolder<T>) {
-        requireSection<T>(holder).onViewDetachedFromWindow(holder)
+        getSection(holder).onViewDetachedFromWindow(holder)
     }
 
     override fun onFailedToRecycleView(holder: ListaSectionViewHolder<T>): Boolean {
-        return requireSection<T>(holder).onFailedToRecycleView(holder)
+        return getSection(holder).onFailedToRecycleView(holder)
     }
 
     override fun getItemCount(): Int {
@@ -113,8 +115,8 @@ open class ListaAdapter<T>(
      *
      * @param items the new items to be applied to the adapter
      */
-    fun <V : T> submit(items: List<V>) {
-        differ.submitList(items)
+    fun <V : T> submit(items: List<V>, commitCallback: Runnable? = null) {
+        differ.submitList(items, commitCallback)
     }
 
     /**
@@ -152,21 +154,22 @@ open class ListaAdapter<T>(
         differ.clearListListeners()
     }
 
-    private fun <V : T> requireSection(holder: ListaSectionViewHolder<*>): ListaSection<V> {
+    private fun getSection(holder: ListaSectionViewHolder<T>)
+            : ListaSection<T, ListaSectionViewHolder<T>> {
         @Suppress("UNCHECKED_CAST")
         return (sectionRegistry.getSectionForItemViewType(holder.itemViewType)
             ?: throw IllegalStateException(
                 "No section found for ViewHolder at ${holder.absoluteAdapterPosition} " +
                         "and viewType = ${holder.itemViewType}"
-            )) as ListaSection<V>
+            )) as ListaSection<T, ListaSectionViewHolder<T>>
     }
 
-    private fun <V : T> requireSection(itemViewType: Int): ListaSection<V> {
+    private fun getSection(itemViewType: Int): ListaSection<T, ListaSectionViewHolder<T>> {
         @Suppress("UNCHECKED_CAST")
         return (sectionRegistry.getSectionForItemViewType(itemViewType)
             ?: throw IllegalStateException(
                 "No section found for itemViewType: $itemViewType"
-            )) as ListaSection<V>
+            )) as ListaSection<T, ListaSectionViewHolder<T>>
     }
 
     private inner class AdapterUpdateCallback : ListUpdateCallback {

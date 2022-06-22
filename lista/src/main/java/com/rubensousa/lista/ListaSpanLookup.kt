@@ -18,7 +18,7 @@ class ListaSpanLookup(
         defaultSpanSize = size
     }
 
-    fun setSpanSizeForSection(section: ListaSection<*>, size: Int) {
+    fun setSpanSizeForSection(section: ListaSection<*, *>, size: Int) {
         setSpanSizeForItemViewType(section.getItemViewType(), size)
     }
 
@@ -30,7 +30,7 @@ class ListaSpanLookup(
         spanSizes.remove(itemViewType)
     }
 
-    fun removeSpanSizeForSection(section: ListaSection<*>) {
+    fun removeSpanSizeForSection(section: ListaSection<*, *>) {
         removeSpanSizeForItemViewType(section.getItemViewType())
     }
 

@@ -27,13 +27,21 @@ import com.rubensousa.lista.sample.model.CardModel
 class CardSection(
     layout: Int = R.layout.section_card,
     private val showPosition: Boolean = true
-) : ListaSection<CardModel>(layout) {
+) : ListaSection<CardModel, CardSection.ViewHolder>(layout) {
 
-    override fun onCreateViewHolder(view: View): ListaSectionViewHolder<CardModel> {
-        return VH(view, showPosition)
+    override fun onCreateViewHolder(view: View): ViewHolder {
+        return ViewHolder(view, showPosition)
     }
 
-    class VH(view: View, private val showPosition: Boolean) :
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        item: CardModel,
+        payloads: List<Any>
+    ) {
+        super.onBindViewHolder(holder, item, payloads)
+    }
+
+    class ViewHolder(view: View, private val showPosition: Boolean) :
         ListaSectionViewHolder<CardModel>(view) {
 
         private val binding = SectionCardBinding.bind(view)

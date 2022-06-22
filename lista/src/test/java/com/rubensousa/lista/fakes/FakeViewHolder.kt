@@ -19,7 +19,7 @@ package com.rubensousa.lista.fakes
 import android.view.View
 import com.rubensousa.lista.ListaSectionViewHolder
 
-class FakeViewHolder<T : Any>(view: View) : ListaSectionViewHolder<T>(view) {
+class FakeViewHolder<T>(view: View) : ListaSectionViewHolder<T>(view) {
 
     var createdCalled = false
     var onBindCalled = false

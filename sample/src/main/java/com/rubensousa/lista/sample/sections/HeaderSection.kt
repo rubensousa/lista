@@ -23,11 +23,11 @@ import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.databinding.SectionHeaderBinding
 import com.rubensousa.lista.sample.model.HeaderModel
 
-class HeaderSection : ListaSection<HeaderModel>(R.layout.section_header) {
+class HeaderSection : ListaSection<HeaderModel, HeaderSection.ViewHolder>(R.layout.section_header) {
 
-    override fun onCreateViewHolder(view: View): ListaSectionViewHolder<HeaderModel> = VH(view)
+    override fun onCreateViewHolder(view: View): ViewHolder = ViewHolder(view)
     
-    class VH(view: View) : ListaSectionViewHolder<HeaderModel>(view) {
+    class ViewHolder(view: View) : ListaSectionViewHolder<HeaderModel>(view) {
 
         private val binding = SectionHeaderBinding.bind(view)
 

@@ -37,7 +37,6 @@ import com.rubensousa.lista.ListaSectionViewHolder
  */
 abstract class ListaNestedSectionViewHolder<T>(
     itemView: View,
-    private val recycledViewPool: RecyclerView.RecycledViewPool,
     private val scrollStateManager: ListaScrollStateManager
 ) : ListaSectionViewHolder<T>(itemView) {
 
@@ -61,14 +60,23 @@ abstract class ListaNestedSectionViewHolder<T>(
      */
     abstract fun updateAdapter(item: T)
 
+    /**
+     * The RecycledViewPool to use for this ViewHolder, or null to use the default one
+     */
+    open fun getRecycledViewPool(): RecyclerView.RecycledViewPool? {
+        return null
+    }
+
     @CallSuper
     override fun onCreated() {
         super.onCreated()
         val recyclerView = getRecyclerView()
 
-        // Set a shared view pool to recycle views across multiple RecyclerViews
-        recyclerView.setRecycledViewPool(recycledViewPool)
-
+        // Set a shared view pool if any to recycle views across multiple RecyclerViews
+        val recycledViewPool = getRecycledViewPool()
+        if (recycledViewPool != null) {
+            recyclerView.setRecycledViewPool(recycledViewPool)
+        }
         if (saveScrollState()) {
             // Registers a scroll listener in this RecyclerView to determine
             // if we need to save the scroll state

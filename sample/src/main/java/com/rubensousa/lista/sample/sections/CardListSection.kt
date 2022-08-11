@@ -24,32 +24,34 @@ import com.rubensousa.lista.ListaAdapter
 import com.rubensousa.lista.nested.ListaNestedSection
 import com.rubensousa.lista.nested.ListaNestedSectionViewHolder
 import com.rubensousa.lista.nested.ListaScrollStateManager
+import com.rubensousa.lista.pool.getActivityScopedRecycledViewPool
 import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.databinding.SectionCardListBinding
 import com.rubensousa.lista.sample.model.CardListModel
 import com.rubensousa.lista.section.ItemSectionRegistry
 
 class CardListSection(
-    recycledViewPool: RecyclerView.RecycledViewPool,
     scrollStateManager: ListaScrollStateManager
 ) : ListaNestedSection<CardListModel, CardListSection.VH>(
     layoutId = R.layout.section_card_list,
-    recycledViewPool = recycledViewPool,
     scrollStateManager = scrollStateManager
 ) {
 
     override fun onCreateViewHolder(view: View): VH {
-        return VH(view, recycledViewPool, scrollStateManager)
+        return VH(view, scrollStateManager)
     }
 
     class VH(
         view: View,
-        recycledViewPool: RecyclerView.RecycledViewPool,
         scrollStateManager: ListaScrollStateManager
-    ) : ListaNestedSectionViewHolder<CardListModel>(view, recycledViewPool, scrollStateManager) {
+    ) : ListaNestedSectionViewHolder<CardListModel>(view, scrollStateManager) {
 
         private val binding = SectionCardListBinding.bind(view)
         private val adapter = ListaAdapter(ListModelDiffCallback())
+
+        override fun getRecycledViewPool(): RecyclerView.RecycledViewPool {
+            return getActivityScopedRecycledViewPool()
+        }
 
         override fun onCreated() {
             super.onCreated()

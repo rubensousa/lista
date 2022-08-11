@@ -56,13 +56,13 @@ class MainFragment : Fragment(R.layout.screen_options) {
 
     private fun loadItems() {
         viewModel.loadItems()
-        viewModel.getItems().observe(viewLifecycleOwner, Observer { list ->
+        viewModel.getItems().observe(viewLifecycleOwner) { list ->
             if (list != null) {
                 listController.submitList(list)
             } else {
                 listController.submitList(emptyList())
             }
-        })
+        }
     }
 
 }

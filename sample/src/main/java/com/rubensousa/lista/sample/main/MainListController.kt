@@ -30,7 +30,7 @@ import com.rubensousa.lista.ListaAdapter
 import com.rubensousa.lista.ListaController
 import com.rubensousa.lista.ListaSpanLookup
 import com.rubensousa.lista.nested.ListaScrollStateManager
-import com.rubensousa.lista.nested.ListaUnboundedViewPool
+import com.rubensousa.lista.pool.getActivityScopedRecycledViewPool
 import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.model.CardListModel
 import com.rubensousa.lista.sample.model.CardModel
@@ -54,12 +54,8 @@ class MainListController(
         return GridLayoutManager(context, 2)
     }
 
-    override fun createRecycledViewPool(): RecyclerView.RecycledViewPool? {
-        return ListaUnboundedViewPool()
-    }
-
-    override fun hasFixedSize(): Boolean {
-        return true
+    override fun getRecycledViewPool(): RecyclerView.RecycledViewPool {
+        return fragment.getActivityScopedRecycledViewPool()
     }
 
     override fun createSectionRegistry(
@@ -73,7 +69,7 @@ class MainListController(
         )
         registry.register(OptionSection(this))
         registry.register(HeaderSection())
-        registry.register(CardListSection(recyclerView.recycledViewPool, scrollStateManager))
+        registry.register(CardListSection(scrollStateManager))
         registry.register(cardSection)
 
         val layoutManager = recyclerView.layoutManager as GridLayoutManager

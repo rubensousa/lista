@@ -30,7 +30,7 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.nested
+package com.rubensousa.lista.pool
 
 import android.util.SparseArray
 import androidx.recyclerview.widget.RecyclerView

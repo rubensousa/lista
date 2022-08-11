@@ -17,7 +17,6 @@
 package com.rubensousa.lista.nested
 
 import androidx.annotation.LayoutRes
-import androidx.recyclerview.widget.RecyclerView
 import com.rubensousa.lista.ListaSection
 import com.rubensousa.lista.ListaSectionViewHolder
 
@@ -26,14 +25,10 @@ import com.rubensousa.lista.ListaSectionViewHolder
  *
  * @param layoutId the layout id to be inflated
  *
- * @param recycledViewPool a shared [RecyclerView.RecycledViewPool] to recycle Views
- * between multiple RecyclerViews
- *
  * @param scrollStateManager a shared [ListaScrollStateManager] to persist the scroll state
  */
 abstract class ListaNestedSection<T, VH: ListaSectionViewHolder<T>>(
     @LayoutRes layoutId: Int,
-    protected val recycledViewPool: RecyclerView.RecycledViewPool = ListaUnboundedViewPool(),
     protected val scrollStateManager: ListaScrollStateManager = ListaScrollStateManager()
 ) : ListaSection<T, VH>(layoutId) {
 

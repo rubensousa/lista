@@ -20,6 +20,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
+import androidx.viewbinding.ViewBinding
 
 /**
  * A [ListaSection] takes care of showing sections in a [ListaAdapter].
@@ -88,8 +89,24 @@ abstract class ListaSection<T, V : ListaViewHolder<T>>(
      * Helper function to inflate the layout specified in [layoutId]
      * @return the View that'll be used by the ViewHolder
      */
-    protected fun inflateLayout(parent: ViewGroup, layoutId: Int): View {
+    protected fun inflate(parent: ViewGroup, layoutId: Int): View {
         return LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
+    }
+
+    /**
+     * Helper function to inflate the layout from a ViewBinding reference
+     * @return the ViewBinding that'll be used by the ViewHolder
+     */
+    protected fun <T : ViewBinding> inflate(
+        parent: ViewGroup,
+        inflater: (
+            layoutInflater: LayoutInflater,
+            parent: ViewGroup,
+            attachToParent: Boolean
+        ) -> T
+    ): T {
+        val layoutInflater = LayoutInflater.from(parent.context)
+        return inflater(layoutInflater, parent, false)
     }
 
     /**

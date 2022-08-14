@@ -16,12 +16,10 @@
 
 package com.rubensousa.lista.sample.sections
 
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.rubensousa.lista.ListaSection
 import com.rubensousa.lista.ListaViewHolder
-import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.databinding.SectionOptionBinding
 import com.rubensousa.lista.sample.model.OptionModel
 
@@ -33,7 +31,7 @@ class OptionSection(private val onOptionClickListener: OnOptionClickListener) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
-        return ViewHolder(inflateLayout(parent, R.layout.section_option))
+        return ViewHolder(inflate(parent, SectionOptionBinding::inflate))
     }
 
     override fun onViewHolderBound(holder: ViewHolder, item: OptionModel, payloads: List<Any>) {
@@ -46,9 +44,9 @@ class OptionSection(private val onOptionClickListener: OnOptionClickListener) :
         holder.clickListener = null
     }
 
-    class ViewHolder(view: View) : ListaViewHolder<OptionModel>(view) {
+    class ViewHolder(private val binding: SectionOptionBinding) :
+        ListaViewHolder<OptionModel>(binding.root) {
 
-        private val binding = SectionOptionBinding.bind(view)
         var clickListener: OnOptionClickListener? = null
 
         override fun onCreated() {
@@ -69,7 +67,6 @@ class OptionSection(private val onOptionClickListener: OnOptionClickListener) :
                 binding.optionSubtitleTextView.setText(item.subtitleResource)
             }
         }
-
 
 
     }

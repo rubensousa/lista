@@ -16,7 +16,6 @@
 
 package com.rubensousa.lista.sample.sections
 
-import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.rubensousa.lista.ListaSection
 import com.rubensousa.lista.ListaViewHolder
@@ -26,11 +25,7 @@ import com.rubensousa.lista.sample.model.HeaderModel
 class HeaderSection : ListaSection<HeaderModel, HeaderSection.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
-        return ViewHolder(
-            SectionHeaderBinding.inflate(
-                LayoutInflater.from(parent.context), parent, false
-            )
-        )
+        return ViewHolder(inflate(parent, SectionHeaderBinding::inflate))
     }
 
     class ViewHolder(private val binding: SectionHeaderBinding) :

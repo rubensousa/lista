@@ -39,7 +39,7 @@ class CardListSection(
 ) {
 
     override fun onCreateViewHolder(parent: ViewGroup): VH {
-        return VH(inflateLayout(parent, R.layout.section_card_list))
+        return VH(inflate(parent, R.layout.section_card_list))
     }
 
     class VH(view: View) : ListaNestedViewHolder<CardListModel>(view) {

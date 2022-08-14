@@ -16,7 +16,6 @@
 
 package com.rubensousa.lista.sample.sections
 
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.rubensousa.lista.ListaSection
@@ -31,13 +30,14 @@ class CardSection(
 ) : ListaSection<CardModel, CardSection.ViewHolder>(itemViewType = layout) {
 
     override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
-        return ViewHolder(inflateLayout(parent, layout), showPosition)
+        val view = inflate(parent, layout)
+        return ViewHolder(SectionCardBinding.bind(view), showPosition)
     }
 
-    class ViewHolder(view: View, private val showPosition: Boolean) :
-        ListaViewHolder<CardModel>(view) {
-
-        private val binding = SectionCardBinding.bind(view)
+    class ViewHolder(
+        private val binding: SectionCardBinding,
+        private val showPosition: Boolean
+    ) : ListaViewHolder<CardModel>(binding.root) {
 
         override fun onBound(item: CardModel, payloads: List<Any>) {
             super.onBound(item, payloads)

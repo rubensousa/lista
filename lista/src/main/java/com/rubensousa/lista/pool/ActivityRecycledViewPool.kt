@@ -21,6 +21,7 @@ import android.content.ContextWrapper
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.rubensousa.lista.R
 
 /**
  * Can be used to provide a shared [RecyclerView.RecycledViewPool] across multiple fragments
@@ -29,25 +30,38 @@ import androidx.recyclerview.widget.RecyclerView
  * You can get this instance in Fragments via [Fragment.getActivityScopedRecycledViewPool],
  * in Views via [View.getActivityScopedRecycledViewPool]
  * or in ViewHolders via [RecyclerView.ViewHolder.getActivityScopedRecycledViewPool].
+ *
  */
-interface ActivityRecycledViewPoolProvider {
-    fun getActivityRecycledViewPool(): RecyclerView.RecycledViewPool
+fun Activity.installSharedRecycledViewPool(
+    viewPool: RecyclerView.RecycledViewPool = ListaUnboundedViewPool()
+) {
+    window.decorView.setTag(R.id.activity_scoped_recycledviewpool, viewPool)
+}
+
+fun Activity.clearSharedRecycledViewPool() {
+    val viewPool = window.decorView.getTag(R.id.activity_scoped_recycledviewpool)
+    if (viewPool !is RecyclerView.RecycledViewPool) {
+        return
+    }
+    viewPool.clear()
+}
+
+internal fun Activity.findSharedRecycledViewPool(): RecyclerView.RecycledViewPool? {
+    val viewPool = window.decorView.getTag(R.id.activity_scoped_recycledviewpool)
+    if (viewPool !is RecyclerView.RecycledViewPool) {
+        return null
+    }
+    return viewPool
 }
 
 fun Fragment.getActivityScopedRecycledViewPool(): RecyclerView.RecycledViewPool {
-    val activity = requireActivity()
-    if (activity is ActivityRecycledViewPoolProvider) {
-        return activity.getActivityRecycledViewPool()
-    }
-    throw IllegalStateException("Your Fragment's parent activity must implement ActivityRecycledViewPoolProvider")
+    return requireActivity().findSharedRecycledViewPool()
+        ?: throw IllegalStateException("Your Fragment's parent activity didn't call installSharedRecycledViewPool")
 }
 
 fun View.getActivityScopedRecycledViewPool(): RecyclerView.RecycledViewPool {
-    val activity = findViewActivity(this)
-    if (activity is ActivityRecycledViewPoolProvider) {
-        return activity.getActivityRecycledViewPool()
-    }
-    throw IllegalStateException("Your View's parent activity must implement ActivityRecycledViewPoolProvider")
+    return findViewActivity(this).findSharedRecycledViewPool()
+        ?: throw IllegalStateException("Your View's parent activity didn't call installSharedRecycledViewPool")
 }
 
 fun RecyclerView.ViewHolder.getActivityScopedRecycledViewPool(): RecyclerView.RecycledViewPool {

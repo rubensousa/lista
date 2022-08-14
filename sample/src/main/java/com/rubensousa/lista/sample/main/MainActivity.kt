@@ -18,17 +18,15 @@ package com.rubensousa.lista.sample.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
-import com.rubensousa.lista.pool.ActivityRecycledViewPoolProvider
-import com.rubensousa.lista.pool.ListaUnboundedViewPool
+import com.rubensousa.lista.pool.clearSharedRecycledViewPool
+import com.rubensousa.lista.pool.installSharedRecycledViewPool
 import com.rubensousa.lista.sample.R
 
-class MainActivity : AppCompatActivity(R.layout.activity_main), ActivityRecycledViewPoolProvider {
-
-    private val viewPool = ListaUnboundedViewPool()
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSharedRecycledViewPool()
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .add(R.id.container, MainFragment())
@@ -38,11 +36,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ActivityRecycled
 
     override fun onDestroy() {
         super.onDestroy()
-        viewPool.clear()
-    }
-
-    override fun getActivityRecycledViewPool(): RecyclerView.RecycledViewPool {
-        return viewPool
+        clearSharedRecycledViewPool()
     }
 
 }

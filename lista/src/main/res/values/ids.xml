@@ -16,4 +16,5 @@
 
 <resources>
     <id name="scroll_state_tag_key" />
+    <id name="activity_scoped_recycledviewpool" />
 </resources>

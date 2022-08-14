@@ -39,7 +39,7 @@ open class ItemSectionRegistry : ListaSectionRegistry() {
 
     fun registerForMatcher(section: ListaSection<*, *>, itemMatcher: SectionItemMatcher) {
         sectionMatchers[itemMatcher] = section
-        registerForViewType(section)
+        registerSection(section)
     }
 
     override fun <T> getSectionForItem(item: T): ListaSection<*, *>? {

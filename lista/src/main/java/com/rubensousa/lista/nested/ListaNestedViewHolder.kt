@@ -21,24 +21,21 @@ import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
-import com.rubensousa.lista.ListaSectionViewHolder
+import com.rubensousa.lista.ListaViewHolder
 
 /**
  * A ViewHolder for nested RecyclerViews.
  *
  * Scroll position is saved and restored automatically using [ListaScrollStateManager]
- * if [saveScrollState] returns true.
+ * if [isScrollStateSaveEnabled] returns true.
  *
- * If [recycleChildrenOnDetach] returns true, scroll state will be saved in [onDetachedFromWindow]
+ * If [isRecyclingChildrenOnDetachedFromWindow] returns true, scroll state will be saved in [onDetachedFromWindow]
  * and restored in [onAttachedToWindow].
  * This should have the same value as [LinearLayoutManager.getRecycleChildrenOnDetach]
  *
  * Provide a unique scroll state key in [getScrollStateKey] based on the item [T]
  */
-abstract class ListaNestedSectionViewHolder<T>(
-    itemView: View,
-    private val scrollStateManager: ListaScrollStateManager
-) : ListaSectionViewHolder<T>(itemView) {
+abstract class ListaNestedViewHolder<T>(itemView: View) : ListaViewHolder<T>(itemView) {
 
     /**
      * @return the RecyclerView that'll draw the items of this section
@@ -56,12 +53,15 @@ abstract class ListaNestedSectionViewHolder<T>(
     abstract fun getScrollStateKey(item: T): String
 
     /**
-     * Replace the adapter contents using notifyDataSetChanged() or related methods
+     * Replace the adapter contents using notifyDataSetChanged() or related methods.
+     * Do not worry about any actual diffing at this stage,
+     * because the adapter will be completely replaced
      */
     abstract fun updateAdapter(item: T)
 
     /**
-     * The RecycledViewPool to use for this ViewHolder, or null to use the default one
+     * The RecycledViewPool to use for this ViewHolder, or null to use the default one.
+     * For maximum performance, consider using a shared [RecyclerView.RecycledViewPool]
      */
     open fun getRecycledViewPool(): RecyclerView.RecycledViewPool? {
         return null
@@ -77,34 +77,17 @@ abstract class ListaNestedSectionViewHolder<T>(
         if (recycledViewPool != null) {
             recyclerView.setRecycledViewPool(recycledViewPool)
         }
-        if (saveScrollState()) {
-            // Registers a scroll listener in this RecyclerView to determine
-            // if we need to save the scroll state
-            scrollStateManager.setupRecyclerView(recyclerView)
-        }
     }
 
     @CallSuper
-    override fun onBind(item: T, payloads: List<Any>) {
-        super.onBind(item, payloads)
-        replaceList(item)
-    }
-
-    fun replaceList(item: T) {
+    override fun onBound(item: T, payloads: List<Any>) {
+        super.onBound(item, payloads)
         updateAdapter(item)
         getRecyclerView().adapter = getAdapter()
-        scrollStateManager.setScrollStateKey(getRecyclerView(), getScrollStateKey(item))
-        if (saveScrollState()) {
-            scrollStateManager.restoreScrollState(getRecyclerView())
-        }
     }
 
     @CallSuper
     override fun onRecycled() {
-        if (saveScrollState()) {
-            scrollStateManager.saveScrollState(getRecyclerView())
-            scrollStateManager.setScrollStateKey(getRecyclerView(), null)
-        }
         super.onRecycled()
         // By setting the adapter to null,
         // we make sure the ViewHolders get a call to onDetachedFromWindow
@@ -112,47 +95,44 @@ abstract class ListaNestedSectionViewHolder<T>(
     }
 
     @CallSuper
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        if (saveScrollState() && recycleChildrenOnDetach()) {
-            scrollStateManager.restoreScrollState(getRecyclerView())
-        }
-    }
-
-    @CallSuper
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        if (saveScrollState() && recycleChildrenOnDetach()) {
-            scrollStateManager.saveScrollState(getRecyclerView())
-        }
         /**
          * If we fast scroll while this ViewHolder's RecyclerView is still settling the scroll,
          * the view will be detached and won't be snapped correctly.
          * To fix that, we snap again without smooth scrolling.
          */
-        val snapHelper = getSnapHelper() ?: return
-        val lm = getRecyclerView().layoutManager ?: return
-        snapHelper.findSnapView(lm)?.let {
-            val snapDistance = snapHelper.calculateDistanceToFinalSnap(lm, it)
-            if (snapDistance!![0] != 0 || snapDistance[1] != 0) {
-                getRecyclerView().scrollBy(snapDistance[0], snapDistance[1])
-            }
-        }
+        restoreSnapPosition()
     }
+
 
     /**
      * @return true if scroll state should be saved
      */
-    open fun saveScrollState() = true
+    open fun isScrollStateSaveEnabled() = true
 
     /**
-     * @return true if the LayoutManager is set to recycle views when they're detached from the window
+     * @return true if the LayoutManager is set to recycle views
+     * when they're detached from the window.
+     * When this is true, the scroll state needs to be restored at [onAttachedToWindow]
+     * and saved in [onDetachedFromWindow]
      */
-    open fun recycleChildrenOnDetach() = true
+    open fun isRecyclingChildrenOnDetachedFromWindow() = true
 
     /**
      * @return the SnapHelper attached to the RecyclerView in [getRecyclerView] or null
      */
     open fun getSnapHelper(): SnapHelper? = null
+
+    private fun restoreSnapPosition() {
+        val snapHelper = getSnapHelper() ?: return
+        val layout = getRecyclerView().layoutManager ?: return
+        snapHelper.findSnapView(layout)?.let { view ->
+            val snapDistance = snapHelper.calculateDistanceToFinalSnap(layout, view) ?: return@let
+            if (snapDistance[0] != 0 || snapDistance[1] != 0) {
+                getRecyclerView().scrollBy(snapDistance[0], snapDistance[1])
+            }
+        }
+    }
 
 }

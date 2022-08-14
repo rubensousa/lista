@@ -23,7 +23,7 @@ import com.rubensousa.lista.ListaSection
  * A [ListaSectionRegistry] is responsible for finding a suitable [ListaSection]
  * for a certain object and itemViewType
  *
- * Call [registerForViewType] in your child classes to register your section
+ * Call [registerSection] in your child classes to register your section
  *
  * Check [ClassSectionRegistry] and [ItemSectionRegistry] for some default implementations.
  */
@@ -37,7 +37,7 @@ abstract class ListaSectionRegistry {
         return sectionsPerViewType[itemViewType]
     }
 
-    protected fun registerForViewType(section: ListaSection<*, *>) {
+    protected fun registerSection(section: ListaSection<*, *>) {
         if (section.getItemViewType() == ListaSection.VIEW_TYPE_AUTO_GENERATED) {
             // Set the id starting from negative numbers
             // to avoid any collision from ids set by the user

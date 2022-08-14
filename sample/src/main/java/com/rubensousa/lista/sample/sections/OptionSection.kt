@@ -17,36 +17,49 @@
 package com.rubensousa.lista.sample.sections
 
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.rubensousa.lista.ListaSection
-import com.rubensousa.lista.ListaSectionViewHolder
+import com.rubensousa.lista.ListaViewHolder
 import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.databinding.SectionOptionBinding
 import com.rubensousa.lista.sample.model.OptionModel
 
 class OptionSection(private val onOptionClickListener: OnOptionClickListener) :
-    ListaSection<OptionModel, OptionSection.ViewHolder>(R.layout.section_option) {
+    ListaSection<OptionModel, OptionSection.ViewHolder>() {
 
     interface OnOptionClickListener {
         fun onOptionClicked(optionModel: OptionModel)
     }
 
-    override fun onCreateViewHolder(view: View): ViewHolder {
-        return ViewHolder(view, onOptionClickListener)
+    override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
+        return ViewHolder(inflateLayout(parent, R.layout.section_option))
     }
 
-    class ViewHolder(view: View, private val onOptionClickListener: OnOptionClickListener) :
-        ListaSectionViewHolder<OptionModel>(view), View.OnClickListener {
+    override fun onViewHolderBound(holder: ViewHolder, item: OptionModel, payloads: List<Any>) {
+        super.onViewHolderBound(holder, item, payloads)
+        holder.clickListener = onOptionClickListener
+    }
+
+    override fun onViewHolderRecycled(holder: ViewHolder) {
+        super.onViewHolderRecycled(holder)
+        holder.clickListener = null
+    }
+
+    class ViewHolder(view: View) : ListaViewHolder<OptionModel>(view) {
 
         private val binding = SectionOptionBinding.bind(view)
+        var clickListener: OnOptionClickListener? = null
 
         override fun onCreated() {
             super.onCreated()
-            itemView.setOnClickListener(this)
+            itemView.setOnClickListener {
+                getItem()?.let { item -> clickListener?.onOptionClicked(item) }
+            }
         }
 
-        override fun onBind(item: OptionModel, payloads: List<Any>) {
-            super.onBind(item, payloads)
+        override fun onBound(item: OptionModel, payloads: List<Any>) {
+            super.onBound(item, payloads)
             binding.optionTitleTextView.setText(item.titleResource)
             if (item.subtitleResource == null) {
                 binding.optionSubtitleTextView.text = ""
@@ -57,9 +70,8 @@ class OptionSection(private val onOptionClickListener: OnOptionClickListener) :
             }
         }
 
-        override fun onClick(v: View) {
-            getItem()?.let { item -> onOptionClickListener.onOptionClicked(item) }
-        }
+
+
     }
 
 }

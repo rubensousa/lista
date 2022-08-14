@@ -20,7 +20,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.rubensousa.lista.nested.ListaScrollStateManager
 import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.databinding.ScreenOptionsBinding
@@ -37,7 +36,8 @@ class MainFragment : Fragment(R.layout.screen_options) {
         super.onViewCreated(view, savedInstanceState)
         _binding = ScreenOptionsBinding.bind(view)
 
-        scrollStateManager = ListaScrollStateManager(savedInstanceState)
+        scrollStateManager = ListaScrollStateManager()
+        scrollStateManager.onRestoreInstanceState(savedInstanceState)
         listController = MainListController(this, scrollStateManager)
         listController.setup(binding.recyclerView)
 

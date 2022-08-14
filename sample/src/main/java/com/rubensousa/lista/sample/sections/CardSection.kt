@@ -17,37 +17,30 @@
 package com.rubensousa.lista.sample.sections
 
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.rubensousa.lista.ListaSection
-import com.rubensousa.lista.ListaSectionViewHolder
+import com.rubensousa.lista.ListaViewHolder
 import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.databinding.SectionCardBinding
 import com.rubensousa.lista.sample.model.CardModel
 
 class CardSection(
-    layout: Int = R.layout.section_card,
+    private val layout: Int = R.layout.section_card,
     private val showPosition: Boolean = true
-) : ListaSection<CardModel, CardSection.ViewHolder>(layout) {
+) : ListaSection<CardModel, CardSection.ViewHolder>(itemViewType = layout) {
 
-    override fun onCreateViewHolder(view: View): ViewHolder {
-        return ViewHolder(view, showPosition)
-    }
-
-    override fun onBindViewHolder(
-        holder: ViewHolder,
-        item: CardModel,
-        payloads: List<Any>
-    ) {
-        super.onBindViewHolder(holder, item, payloads)
+    override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
+        return ViewHolder(inflateLayout(parent, layout), showPosition)
     }
 
     class ViewHolder(view: View, private val showPosition: Boolean) :
-        ListaSectionViewHolder<CardModel>(view) {
+        ListaViewHolder<CardModel>(view) {
 
         private val binding = SectionCardBinding.bind(view)
 
-        override fun onBind(item: CardModel, payloads: List<Any>) {
-            super.onBind(item, payloads)
+        override fun onBound(item: CardModel, payloads: List<Any>) {
+            super.onBound(item, payloads)
             itemView.tag = item.id
             binding.cardTextView.isVisible = showPosition
             binding.cardTextView.text = bindingAdapterPosition.toString()

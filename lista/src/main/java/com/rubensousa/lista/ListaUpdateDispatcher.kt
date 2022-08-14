@@ -36,9 +36,9 @@ class ListaUpdateDispatcher<T> {
     }
 
     /**
-     *  ScrollListener that dispatches [pendingUpdate] when the RecyclerView stops scrolling
+     * ScrollListener that dispatches [pendingUpdate] when the RecyclerView stops scrolling
      *
-     *  This ScrollListener is only used if [dispatchDuringScroll] is false
+     * This ScrollListener is only used if [isDispatchDuringScrollEnabled] is false
      */
     private val itemDispatchScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -63,8 +63,8 @@ class ListaUpdateDispatcher<T> {
         recyclerView: RecyclerView,
         adapter: ListaAdapter<T>,
         items: List<T>,
-        applyDiffing: Boolean,
-        dispatchDuringScroll: Boolean
+        applyDiffing: Boolean = true,
+        dispatchDuringScroll: Boolean = true
     ) {
         isDispatchDuringScrollEnabled = dispatchDuringScroll
         // Cancel any pending update immediately
@@ -88,6 +88,8 @@ class ListaUpdateDispatcher<T> {
                 recyclerView.itemAnimator?.isRunning(null)
                 updateHandler.post(updateRunnable)
             }
+        } else {
+            // We're scrolling, so just wait for the scroll listener to receive the idle state
         }
     }
 

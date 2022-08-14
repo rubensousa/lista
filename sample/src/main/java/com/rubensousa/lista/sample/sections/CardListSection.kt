@@ -17,12 +17,13 @@
 package com.rubensousa.lista.sample.sections
 
 import android.view.View
+import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rubensousa.decorator.LinearMarginDecoration
 import com.rubensousa.lista.ListaAdapter
 import com.rubensousa.lista.nested.ListaNestedSection
-import com.rubensousa.lista.nested.ListaNestedSectionViewHolder
+import com.rubensousa.lista.nested.ListaNestedViewHolder
 import com.rubensousa.lista.nested.ListaScrollStateManager
 import com.rubensousa.lista.pool.getActivityScopedRecycledViewPool
 import com.rubensousa.lista.sample.R
@@ -33,18 +34,15 @@ import com.rubensousa.lista.section.ItemSectionRegistry
 class CardListSection(
     scrollStateManager: ListaScrollStateManager
 ) : ListaNestedSection<CardListModel, CardListSection.VH>(
-    layoutId = R.layout.section_card_list,
+    itemViewType = R.layout.section_card_list,
     scrollStateManager = scrollStateManager
 ) {
 
-    override fun onCreateViewHolder(view: View): VH {
-        return VH(view, scrollStateManager)
+    override fun onCreateViewHolder(parent: ViewGroup): VH {
+        return VH(inflateLayout(parent, R.layout.section_card_list))
     }
 
-    class VH(
-        view: View,
-        scrollStateManager: ListaScrollStateManager
-    ) : ListaNestedSectionViewHolder<CardListModel>(view, scrollStateManager) {
+    class VH(view: View) : ListaNestedViewHolder<CardListModel>(view) {
 
         private val binding = SectionCardListBinding.bind(view)
         private val adapter = ListaAdapter(ListModelDiffCallback())
@@ -81,8 +79,8 @@ class CardListSection(
             adapter.submitNow(item.items)
         }
 
-        override fun onBind(item: CardListModel, payloads: List<Any>) {
-            super.onBind(item, payloads)
+        override fun onBound(item: CardListModel, payloads: List<Any>) {
+            super.onBound(item, payloads)
             itemView.tag = item.id
         }
 
@@ -92,7 +90,7 @@ class CardListSection(
 
         override fun getScrollStateKey(item: CardListModel): String = item.getId()
 
-        override fun recycleChildrenOnDetach(): Boolean = true
+        override fun isRecyclingChildrenOnDetachedFromWindow(): Boolean = true
 
     }
 

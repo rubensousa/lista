@@ -18,6 +18,7 @@ package com.rubensousa.lista
 
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
+import androidx.core.view.children
 import androidx.recyclerview.widget.*
 import com.rubensousa.lista.section.ClassSectionRegistry
 import com.rubensousa.lista.section.ListaSectionRegistry
@@ -38,7 +39,7 @@ import java.util.*
 open class ListaAdapter<T>(
     diffItemCallback: DiffUtil.ItemCallback<T>,
     defaultSectionRegistry: ListaSectionRegistry = ClassSectionRegistry()
-) : RecyclerView.Adapter<ListaSectionViewHolder<T>>() {
+) : RecyclerView.Adapter<ListaViewHolder<T>>() {
 
     private val differ: ListaAsyncDiffer<T>
     private val updateCallback: AdapterUpdateCallback = AdapterUpdateCallback()
@@ -51,11 +52,11 @@ open class ListaAdapter<T>(
         )
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListaSectionViewHolder<T> {
-        return getSection(viewType).onCreateViewHolder(parent)
-            .also { holder: ListaSectionViewHolder<T> ->
-                holder.onCreated()
-            }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListaViewHolder<T> {
+        val section = getSection(viewType)
+        val viewHolder = section.onCreateViewHolder(parent)
+        section.onViewHolderCreated(viewHolder)
+        return viewHolder
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -63,33 +64,33 @@ open class ListaAdapter<T>(
         return sectionRegistry.getSectionForItem(item)?.getItemViewType()
             ?: throw IllegalStateException(
                 "Section not found for position: " + position
-                        + "\nItem found: " + item!!::class.java.simpleName
+                        + "\nItem found: " + item.toString()
             )
     }
 
-    override fun onBindViewHolder(holder: ListaSectionViewHolder<T>, position: Int) {
-        getSection(holder).onBindViewHolder(holder, getItemAt(position), Collections.emptyList())
+    override fun onBindViewHolder(holder: ListaViewHolder<T>, position: Int) {
+        getSection(holder).onViewHolderBound(holder, getItemAt(position), Collections.emptyList())
     }
 
     override fun onBindViewHolder(
-        holder: ListaSectionViewHolder<T>, position: Int, payloads: MutableList<Any>
+        holder: ListaViewHolder<T>, position: Int, payloads: List<Any>
     ) {
-        getSection(holder).onBindViewHolder(holder, getItemAt(position), payloads)
+        getSection(holder).onViewHolderBound(holder, getItemAt(position), payloads)
     }
 
-    override fun onViewRecycled(holder: ListaSectionViewHolder<T>) {
-        getSection(holder).onViewRecycled(holder)
+    override fun onViewRecycled(holder: ListaViewHolder<T>) {
+        getSection(holder).onViewHolderRecycled(holder)
     }
 
-    override fun onViewAttachedToWindow(holder: ListaSectionViewHolder<T>) {
-        getSection(holder).onViewAttachedToWindow(holder)
+    override fun onViewAttachedToWindow(holder: ListaViewHolder<T>) {
+        getSection(holder).onViewHolderAttachedToWindow(holder)
     }
 
-    override fun onViewDetachedFromWindow(holder: ListaSectionViewHolder<T>) {
-        getSection(holder).onViewDetachedFromWindow(holder)
+    override fun onViewDetachedFromWindow(holder: ListaViewHolder<T>) {
+        getSection(holder).onViewHolderDetachedFromWindow(holder)
     }
 
-    override fun onFailedToRecycleView(holder: ListaSectionViewHolder<T>): Boolean {
+    override fun onFailedToRecycleView(holder: ListaViewHolder<T>): Boolean {
         return getSection(holder).onFailedToRecycleView(holder)
     }
 
@@ -105,6 +106,10 @@ open class ListaAdapter<T>(
 
     fun clear() {
         submit(listOf())
+    }
+
+    fun clearNow() {
+        submitNow(listOf())
     }
 
     /**
@@ -154,22 +159,36 @@ open class ListaAdapter<T>(
         differ.clearListListeners()
     }
 
-    private fun getSection(holder: ListaSectionViewHolder<T>)
-            : ListaSection<T, ListaSectionViewHolder<T>> {
+    fun findViewHoldersOfSection(
+        section: ListaSection<*, *>,
+        recyclerView: RecyclerView
+    ): List<RecyclerView.ViewHolder> {
+        val viewHolders = ArrayList<RecyclerView.ViewHolder>()
+        recyclerView.children.forEach { child ->
+            val viewHolder = recyclerView.getChildViewHolder(child)
+            if (viewHolder != null && viewHolder.itemViewType == section.getItemViewType()) {
+                viewHolders.add(viewHolder)
+            }
+        }
+        return viewHolders
+    }
+
+    private fun getSection(holder: ListaViewHolder<T>)
+            : ListaSection<T, ListaViewHolder<T>> {
         @Suppress("UNCHECKED_CAST")
         return (sectionRegistry.getSectionForItemViewType(holder.itemViewType)
             ?: throw IllegalStateException(
                 "No section found for ViewHolder at ${holder.absoluteAdapterPosition} " +
                         "and viewType = ${holder.itemViewType}"
-            )) as ListaSection<T, ListaSectionViewHolder<T>>
+            )) as ListaSection<T, ListaViewHolder<T>>
     }
 
-    private fun getSection(itemViewType: Int): ListaSection<T, ListaSectionViewHolder<T>> {
+    private fun getSection(itemViewType: Int): ListaSection<T, ListaViewHolder<T>> {
         @Suppress("UNCHECKED_CAST")
         return (sectionRegistry.getSectionForItemViewType(itemViewType)
             ?: throw IllegalStateException(
                 "No section found for itemViewType: $itemViewType"
-            )) as ListaSection<T, ListaSectionViewHolder<T>>
+            )) as ListaSection<T, ListaViewHolder<T>>
     }
 
     private inner class AdapterUpdateCallback : ListUpdateCallback {

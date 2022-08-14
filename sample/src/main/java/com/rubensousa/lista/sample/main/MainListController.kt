@@ -80,7 +80,6 @@ class MainListController(
         return registry
     }
 
-
     override fun createItemDecorations(layoutManager: RecyclerView.LayoutManager)
             : List<RecyclerView.ItemDecoration> {
         val gridLayoutManager = layoutManager as GridLayoutManager

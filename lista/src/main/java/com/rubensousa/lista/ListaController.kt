@@ -17,6 +17,7 @@
 package com.rubensousa.lista
 
 import android.content.Context
+import androidx.annotation.CallSuper
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.*
 import com.rubensousa.lista.section.ListaSectionRegistry
@@ -24,7 +25,12 @@ import com.rubensousa.lista.section.ListaSectionRegistry
 /**
  * A controller for a RecyclerView that displays a list of items of type [T].
  *
- * Adapter changes are only dispatched when it's safe to do so
+ * Adapter changes are only dispatched when it's safe to do so.
+ *
+ * Override the relevant setup methods and then call [setup] with your RecyclerView:
+ *
+ * - [createSectionRegistry]: return the [ListaSectionRegistry] used to find the relevant sections
+ * for each item of the adapter
  */
 abstract class ListaController<T>(
     private val lifecycle: Lifecycle
@@ -95,6 +101,7 @@ abstract class ListaController<T>(
      */
     open fun hasFixedSize() = true
 
+    @CallSuper
     open fun onLifecycleDestroy() {
         val lm = recyclerView?.layoutManager
 
@@ -168,9 +175,9 @@ abstract class ListaController<T>(
         items: List<T>,
         applyDiffing: Boolean = true
     ) {
-        recyclerView?.let { currentRv ->
+        recyclerView?.let { currentRecyclerView ->
             updateDispatcher.update(
-                currentRv, adapter, items, applyDiffing,
+                currentRecyclerView, adapter, items, applyDiffing,
                 supportsDispatchingItemsDuringScroll()
             )
         }

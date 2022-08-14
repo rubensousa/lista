@@ -16,7 +16,7 @@
 package com.rubensousa.lista.section
 
 import com.rubensousa.lista.ListaSection
-import com.rubensousa.lista.ListaSectionViewHolder
+import com.rubensousa.lista.ListaViewHolder
 
 /**
  * A [ListaSectionRegistry] that matches a certain [ListaSection]
@@ -29,13 +29,13 @@ open class ClassSectionRegistry : ListaSectionRegistry() {
 
     private val sections = LinkedHashMap<Class<*>, ListaSection<*, *>>()
 
-    inline fun <reified T, VH: ListaSectionViewHolder<T>> register(section: ListaSection<T, VH>) {
+    inline fun <reified T, VH: ListaViewHolder<T>> register(section: ListaSection<T, VH>) {
         registerForClass(section, T::class.java)
     }
 
     fun registerForClass(section: ListaSection<*, *>, clazz: Class<*>) {
         sections[clazz] = section
-        registerForViewType(section)
+        registerSection(section)
     }
 
     override fun <T> getSectionForItem(item: T): ListaSection<*, *>? {

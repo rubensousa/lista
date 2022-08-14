@@ -16,47 +16,63 @@
 
 package com.rubensousa.lista
 
+import android.view.View
+import androidx.annotation.CallSuper
+import androidx.recyclerview.widget.RecyclerView
+
 /**
  * A ViewHolder for a [ListaSection].
+ *
+ * The item bound to this ViewHolder can be accessed via [getItem].
+ * It'll be set in [onBound] and cleared in [onRecycled].
  */
-interface ListaViewHolder<T> {
+abstract class ListaViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+    private var item: T? = null
+
+    /**
+     * @return the current item bound to this section
+     * or null if the item hasn't been bound or was recycled recently
+     */
+    fun getItem(): T? = item
 
     /**
      * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onCreateViewHolder]
      */
-    fun onCreated() {}
+    open fun onCreated() {}
 
     /**
      * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onBindViewHolder]
      *
      * @param item the item from the adapter that needs to be bound
-     * @param payloads a non-empty list for merged payloads
+     * @param payloads a list for merged payloads. Can be empty
      */
-    fun onBind(item: T, payloads: List<Any>) {}
+    @CallSuper
+    open fun onBound(item: T, payloads: List<Any>) {
+        this.item = item
+    }
 
     /**
      * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onViewRecycled]
      */
-    fun onRecycled() {}
+    @CallSuper
+    open fun onRecycled() {
+        item = null
+    }
 
     /**
      * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onFailedToRecycleView]
      */
-    fun onFailedToRecycle(): Boolean = false
+    open fun onFailedToRecycle(): Boolean = false
 
     /**
      * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onViewAttachedToWindow]
      */
-    fun onAttachedToWindow() {}
+    open fun onAttachedToWindow() {}
 
     /**
      * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onViewDetachedFromWindow]
      */
-    fun onDetachedFromWindow() {}
-
-    /**
-     * Implemented by [androidx.recyclerview.widget.RecyclerView.ViewHolder]
-     */
-    fun getItemViewType(): Int
+    open fun onDetachedFromWindow() {}
 
 }

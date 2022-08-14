@@ -40,6 +40,7 @@ class ListaPager(
 
     private var firstVisiblePosition = 0
     private var lastVisiblePosition = 0
+    var isEnabled = true
 
     fun setLayoutManager(layoutManager: LinearLayoutManager) {
         linearLayoutManager = layoutManager
@@ -47,7 +48,9 @@ class ListaPager(
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
-
+        if (!isEnabled) {
+            return
+        }
         val newFirstVisiblePosition = linearLayoutManager.findFirstVisibleItemPosition()
         val newLastVisiblePosition = linearLayoutManager.findLastVisibleItemPosition()
 

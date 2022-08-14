@@ -18,6 +18,7 @@ package com.rubensousa.lista.section
 
 import androidx.annotation.NonNull
 import com.rubensousa.lista.ListaSection
+
 /**
  * A [ListaSectionRegistry] is responsible for finding a suitable [ListaSection]
  * for a certain object and itemViewType
@@ -37,6 +38,11 @@ abstract class ListaSectionRegistry {
     }
 
     protected fun registerForViewType(section: ListaSection<*, *>) {
+        if (section.getItemViewType() == ListaSection.VIEW_TYPE_AUTO_GENERATED) {
+            // Set the id starting from negative numbers
+            // to avoid any collision from ids set by the user
+            section.setGeneratedItemViewType(-sectionsPerViewType.size - 1)
+        }
         sectionsPerViewType[section.getItemViewType()] = section
     }
 

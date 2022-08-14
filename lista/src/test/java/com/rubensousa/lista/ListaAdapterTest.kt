@@ -16,31 +16,19 @@
 
 package com.rubensousa.lista
 
-import android.view.View
-import android.view.ViewGroup
+
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.common.truth.Truth.assertThat
-import com.rubensousa.lista.fakes.FakeIntegerSection
-import com.rubensousa.lista.fakes.FakeStringSection
-import com.rubensousa.lista.fakes.FakeViewHolder
+import com.rubensousa.lista.fakes.IntegerSection
+import com.rubensousa.lista.fakes.StringSection
+import com.rubensousa.lista.fakes.TestViewHolder
 import com.rubensousa.lista.section.ClassSectionRegistry
-import org.junit.Assert.assertEquals
+import io.mockk.mockk
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
-import java.lang.IllegalStateException
 
-@RunWith(MockitoJUnitRunner::class)
 class ListaAdapterTest {
-
-    @Mock
-    lateinit var fakeView: View
-
-    @Mock
-    lateinit var fakeViewGroup: ViewGroup
 
     private val diffItemCallback = object : DiffUtil.ItemCallback<Any>() {
         override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
@@ -60,8 +48,8 @@ class ListaAdapterTest {
 
     @Test
     fun `adapter returns itemViewTypes from sections`() {
-        val integerSection = FakeIntegerSection(fakeView, layoutId = 4)
-        val stringSection = FakeStringSection(fakeView, layoutId = 5)
+        val integerSection = IntegerSection()
+        val stringSection = StringSection()
         adapter.setSectionRegistry(ClassSectionRegistry().apply {
             register(integerSection)
             register(stringSection)
@@ -70,6 +58,7 @@ class ListaAdapterTest {
 
         assertThat(adapter.getItemViewType(0)).isEqualTo(integerSection.getItemViewType())
         assertThat(adapter.getItemViewType(1)).isEqualTo(stringSection.getItemViewType())
+        assertThat(integerSection.getItemViewType()).isNotEqualTo(stringSection.getItemViewType())
     }
 
     @Test(expected = IllegalStateException::class)
@@ -82,38 +71,42 @@ class ListaAdapterTest {
     @Test
     fun `adapter forwards events to the sections`() {
         val adapter = ListaAdapter(diffItemCallback)
+        val itemViewType = 4
         adapter.setSectionRegistry(ClassSectionRegistry().apply {
-            register(FakeIntegerSection(fakeView, layoutId = 4))
+            register(IntegerSection(itemViewType = itemViewType))
         })
         adapter.setList(listOf(0, 1, 2))
 
-        val viewHolder = adapter.onCreateViewHolder(fakeViewGroup, 4) as FakeViewHolder
-        setViewType(viewHolder, 4)
+        val viewHolder = adapter.onCreateViewHolder(mockk(), itemViewType) as TestViewHolder
+        setViewType(viewHolder, itemViewType)
 
-        assertEquals(true, viewHolder.createdCalled)
-        assertEquals(false, viewHolder.onBindCalled)
+        assertThat(viewHolder.createdCalls).isEqualTo(1)
+        assertThat(viewHolder.bindCalls).isEqualTo(0)
 
         adapter.onBindViewHolder(viewHolder, 0)
-        assertEquals(true, viewHolder.onBindCalled)
-        assertEquals(0, viewHolder.getItem())
+
+        assertThat(viewHolder.bindCalls).isEqualTo(1)
+        assertThat(viewHolder.payloads).isEmpty()
+        assertThat(viewHolder.getItem()).isEqualTo(0)
 
         adapter.onViewDetachedFromWindow(viewHolder)
-        assertEquals(true, viewHolder.onDetachedFromWindowCalled)
+        assertThat(viewHolder.detachedFromWindowCalls).isEqualTo(1)
 
         adapter.onViewAttachedToWindow(viewHolder)
-        assertEquals(true, viewHolder.onAttachedFromWindowCalled)
+        assertThat(viewHolder.attachedToWindowCalls).isEqualTo(1)
 
         adapter.onViewRecycled(viewHolder)
-        assertEquals(true, viewHolder.onRecycledCalled)
-        assertEquals(null, viewHolder.getItem())
+        assertThat(viewHolder.recycledCalls).isEqualTo(1)
+        assertThat(viewHolder.getItem()).isNull()
 
-        adapter.onBindViewHolder(viewHolder, 1, mutableListOf(2))
-        assertEquals(true, viewHolder.onBindCalled)
-        assertEquals(1, viewHolder.getItem())
+        val payload = listOf(2)
+        adapter.onBindViewHolder(viewHolder, 1, payload)
+        assertThat(viewHolder.bindCalls).isEqualTo(2)
+        assertThat(viewHolder.payloads).isEqualTo(payload)
+        assertThat(viewHolder.getItem()).isEqualTo(1)
 
         adapter.onFailedToRecycleView(viewHolder)
-        assertEquals(true, viewHolder.onFailedToRecycleCalled)
-        assertEquals(1, viewHolder.getItem())
+        assertThat(viewHolder.failedToRecycleCalls).isEqualTo(1)
     }
 
     // Since we're not using a real RecyclerView, we need to set the itemViewType ourselves

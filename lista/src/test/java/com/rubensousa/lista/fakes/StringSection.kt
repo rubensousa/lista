@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Rúben Sousa
+ * Copyright 2022 Rúben Sousa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,12 @@
 
 package com.rubensousa.lista.fakes
 
-import android.view.View
 import android.view.ViewGroup
 import com.rubensousa.lista.ListaSection
 
-class FakeIntegerSection(
-    private var fakeView: View,
-    layoutId: Int
-) : ListaSection<Int, FakeViewHolder<Int>>(layoutId = layoutId) {
-
-    override fun inflateLayout(parent: ViewGroup, layoutId: Int): View {
-        return fakeView
+class StringSection(itemViewType: Int = VIEW_TYPE_AUTO_GENERATED) :
+    ListaSection<String, TestViewHolder<String>>(itemViewType) {
+    override fun onCreateViewHolder(parent: ViewGroup): TestViewHolder<String> {
+        return TestViewHolder.create()
     }
-
-    override fun onCreateViewHolder(view: View): FakeViewHolder<Int> {
-        return FakeViewHolder(view)
-    }
-
 }

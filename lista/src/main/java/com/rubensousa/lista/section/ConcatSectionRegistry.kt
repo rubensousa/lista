@@ -23,23 +23,41 @@ import com.rubensousa.lista.ListaSection
  * to register multiple [ListaSectionRegistry] to combine them.
  *
  * This is useful when you have different criteria to match certain items
- * or when you need a fallback to a certain position
+ * or when you need a fallback to a certain position.
+ *
+ * Use [addRegistry] to register your individual [ListaSectionRegistry]
+ *
+ * Use [setFallback] to register a default section as fallback
  */
-class ConcatSectionRegistry(private val registries: List<ListaSectionRegistry>) :
-    ListaSectionRegistry() {
+class ConcatSectionRegistry : ListaSectionRegistry() {
+
+    private val registries = ArrayList<ListaSectionRegistry>()
+    private var fallback: ListaSectionRegistry? = null
+
+    fun addRegistry(registry: ListaSectionRegistry) {
+        registries.add(registry)
+    }
+
+    fun setFallback(section: ListaSection<*, *>) {
+        fallback = object : ListaSectionRegistry() {
+            override fun <T> getSectionForItem(item: T): ListaSection<*, *> {
+                return section
+            }
+        }
+    }
 
     override fun <T> getSectionForItem(item: T): ListaSection<*, *>? {
         for (registry in registries) {
             return registry.getSectionForItem(item) ?: continue
         }
-        return null
+        return fallback?.getSectionForItem(item)
     }
 
     override fun getSectionForItemViewType(itemViewType: Int): ListaSection<*, *>? {
         for (registry in registries) {
             return registry.getSectionForItemViewType(itemViewType) ?: continue
         }
-        return null
+        return fallback?.getSectionForItemViewType(itemViewType)
     }
 
 }

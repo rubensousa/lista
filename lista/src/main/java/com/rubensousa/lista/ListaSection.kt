@@ -94,22 +94,6 @@ abstract class ListaSection<T, V : ListaViewHolder<T>>(
     }
 
     /**
-     * Helper function to inflate the layout from a ViewBinding reference
-     * @return the ViewBinding that'll be used by the ViewHolder
-     */
-    protected fun <T : ViewBinding> inflate(
-        parent: ViewGroup,
-        inflater: (
-            layoutInflater: LayoutInflater,
-            parent: ViewGroup,
-            attachToParent: Boolean
-        ) -> T
-    ): T {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        return inflater(layoutInflater, parent, false)
-    }
-
-    /**
      * Is set by the section registry when [VIEW_TYPE_AUTO_GENERATED] is defined as [itemViewType]
      */
     internal fun setGeneratedItemViewType(value: Int) {

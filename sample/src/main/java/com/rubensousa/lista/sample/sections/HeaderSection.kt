@@ -19,13 +19,14 @@ package com.rubensousa.lista.sample.sections
 import android.view.ViewGroup
 import com.rubensousa.lista.ListaSection
 import com.rubensousa.lista.ListaViewHolder
+import com.rubensousa.lista.viewHolderBinding
 import com.rubensousa.lista.sample.databinding.SectionHeaderBinding
 import com.rubensousa.lista.sample.model.HeaderModel
 
 class HeaderSection : ListaSection<HeaderModel, HeaderSection.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
-        return ViewHolder(inflate(parent, SectionHeaderBinding::inflate))
+        return ViewHolder(parent.viewHolderBinding(SectionHeaderBinding::inflate))
     }
 
     class ViewHolder(private val binding: SectionHeaderBinding) :

@@ -36,8 +36,8 @@ class SectionRegistryTest {
         registry.register(stringSection)
         registry.register(integerSection)
 
-        assertThat(stringSection.getItemViewType()).isEqualTo(Int.MAX_VALUE)
-        assertThat(integerSection.getItemViewType()).isEqualTo(Int.MAX_VALUE - 1)
+        assertThat(stringSection.getItemViewType()).isEqualTo(-1)
+        assertThat(integerSection.getItemViewType()).isEqualTo(-2)
     }
 
     @Test
@@ -80,12 +80,22 @@ class SectionRegistryTest {
 
         assertThat(registry.getSectionForItem("A")).isSameInstanceAs(stringSection)
         assertThat(registry.getSectionForItem(0)).isSameInstanceAs(placeholderSection)
+        assertThat(registry.getSectionForItemViewType(PlaceholderSection.ITEM_VIEW_TYPE))
+            .isSameInstanceAs(placeholderSection)
+
     }
 
-    class PlaceholderSection : ListaSection<Boolean, TestViewHolder<Boolean>>() {
+    class PlaceholderSection : ListaSection<Boolean, TestViewHolder<Boolean>>(ITEM_VIEW_TYPE) {
+
+        companion object {
+            const val ITEM_VIEW_TYPE = 1400
+        }
+
         override fun onCreateViewHolder(parent: ViewGroup): TestViewHolder<Boolean> {
             return TestViewHolder.create()
         }
+
     }
 
 }
+

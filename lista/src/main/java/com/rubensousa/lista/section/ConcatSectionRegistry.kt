@@ -39,11 +39,7 @@ class ConcatSectionRegistry : ListaSectionRegistry() {
     }
 
     fun setFallback(section: ListaSection<*, *>) {
-        fallback = object : ListaSectionRegistry() {
-            override fun <T> getSectionForItem(item: T): ListaSection<*, *> {
-                return section
-            }
-        }
+        fallback = FallbackSectionRegistry(section)
     }
 
     override fun <T> getSectionForItem(item: T): ListaSection<*, *>? {
@@ -66,6 +62,23 @@ class ConcatSectionRegistry : ListaSectionRegistry() {
             sections.addAll(registry.getSections())
         }
         return sections
+    }
+
+    private class FallbackSectionRegistry(private val section: ListaSection<*, *>) :
+        ListaSectionRegistry() {
+
+        override fun getSections(): List<ListaSection<*, *>> {
+            return listOf(section)
+        }
+
+        override fun getSectionForItemViewType(itemViewType: Int): ListaSection<*, *> {
+            return section
+        }
+
+        override fun <T> getSectionForItem(item: T): ListaSection<*, *> {
+            return section
+        }
+
     }
 
 }

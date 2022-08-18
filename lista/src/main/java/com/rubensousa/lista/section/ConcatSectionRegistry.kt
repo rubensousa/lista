@@ -60,4 +60,12 @@ class ConcatSectionRegistry : ListaSectionRegistry() {
         return fallback?.getSectionForItemViewType(itemViewType)
     }
 
+    override fun getSections(): List<ListaSection<*, *>> {
+        val sections = ArrayList<ListaSection<*, *>>()
+        registries.forEach { registry ->
+            sections.addAll(registry.getSections())
+        }
+        return sections
+    }
+
 }

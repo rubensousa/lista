@@ -76,8 +76,4 @@ class ListaPager(
         }
     }
 
-    fun getCurrentPage(): ListaPage {
-        return ListaPage(firstVisiblePosition, lastVisiblePosition)
-    }
-
 }

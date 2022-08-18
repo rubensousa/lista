@@ -18,6 +18,8 @@ package com.rubensousa.lista.section
 
 import androidx.annotation.NonNull
 import com.rubensousa.lista.ListaSection
+import java.util.*
+import kotlin.collections.LinkedHashMap
 
 /**
  * A [ListaSectionRegistry] is responsible for finding a suitable [ListaSection]
@@ -35,6 +37,13 @@ abstract class ListaSectionRegistry {
 
     open fun getSectionForItemViewType(itemViewType: Int): ListaSection<*, *>? {
         return sectionsPerViewType[itemViewType]
+    }
+
+    open fun getSections(): List<ListaSection<*, *>> {
+        if (sectionsPerViewType.isEmpty()) {
+            return Collections.emptyList()
+        }
+        return sectionsPerViewType.values.toList()
     }
 
     protected fun registerSection(section: ListaSection<*, *>) {

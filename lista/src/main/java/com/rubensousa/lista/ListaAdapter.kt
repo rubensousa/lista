@@ -102,6 +102,10 @@ open class ListaAdapter<T>(
         sectionRegistry = newSectionRegistry
     }
 
+    fun getSectionRegistry(): ListaSectionRegistry {
+        return sectionRegistry
+    }
+
     fun getItemAt(position: Int): T = differ.getCurrentList()[position]
 
     fun clear() {

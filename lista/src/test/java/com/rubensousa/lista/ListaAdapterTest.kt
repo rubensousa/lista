@@ -39,11 +39,28 @@ class ListaAdapterTest {
             return oldItem == newItem
         }
     }
+    private val mainThreadExecutor = TestExecutor()
+    private val backgroundExecutor = TestExecutor()
     private lateinit var adapter: ListaAdapter<Any>
 
     @Before
     fun setup() {
-        adapter = ListaAdapter(diffItemCallback)
+        adapter = ListaAdapter(
+            differConfig = ListaAsyncDiffer.Config.buildTest(
+                diffItemCallback, mainThreadExecutor, backgroundExecutor
+            ),
+            updateCallback = object : ListaAsyncDiffer.UpdateCallback {
+                override fun onInvalidated() {}
+
+                override fun onInserted(position: Int, count: Int) {}
+
+                override fun onRemoved(position: Int, count: Int) {}
+
+                override fun onMoved(fromPosition: Int, toPosition: Int) {}
+
+                override fun onChanged(position: Int, count: Int, payload: Any?) {}
+            }
+        )
     }
 
     @Test
@@ -54,28 +71,85 @@ class ListaAdapterTest {
             register(integerSection)
             register(stringSection)
         })
-        adapter.setList(listOf(1, "Test"))
+        adapter.submitNow(listOf(1, "Test"))
 
         assertThat(adapter.getItemViewType(0)).isEqualTo(integerSection.getItemViewType())
         assertThat(adapter.getItemViewType(1)).isEqualTo(stringSection.getItemViewType())
         assertThat(integerSection.getItemViewType()).isNotEqualTo(stringSection.getItemViewType())
     }
 
+    @Test
+    fun `adapter item count is the same as size of list`() {
+        assertThat(adapter.itemCount).isEqualTo(0)
+        adapter.submitNow(listOf(1, "Test"))
+        assertThat(adapter.itemCount).isEqualTo(2)
+    }
+
+    @Test
+    fun `clear will erase the entire list`() {
+        adapter.submitNow(listOf(1, "Test"))
+        assertThat(adapter.itemCount).isEqualTo(2)
+
+        adapter.clear()
+
+        backgroundExecutor.executeAll()
+        assertThat(adapter.itemCount).isEqualTo(2)
+
+        mainThreadExecutor.executeAll()
+        assertThat(adapter.itemCount).isEqualTo(0)
+    }
+
+    @Test
+    fun `clear now will erase the entire list immediately`() {
+        adapter.submitNow(listOf(1, "Test"))
+        assertThat(adapter.itemCount).isEqualTo(2)
+
+        adapter.clearNow()
+
+        assertThat(adapter.itemCount).isEqualTo(0)
+    }
+
+    @Test
+    fun `submitting nulls works fine`() {
+        adapter.submit(listOf(null, null, null))
+
+        backgroundExecutor.executeAll()
+        mainThreadExecutor.executeAll()
+
+        assertThat(adapter.getItemAt(0)).isNull()
+        assertThat(adapter.getItemAt(1)).isNull()
+        assertThat(adapter.getItemAt(2)).isNull()
+
+    }
+
+    @Test
+    fun `adapter returns same instance of section registry that was set`() {
+        val integerSection = IntegerSection()
+        val stringSection = StringSection()
+
+        val sectionRegistry = ClassSectionRegistry().apply {
+            register(integerSection)
+            register(stringSection)
+        }
+
+        adapter.setSectionRegistry(sectionRegistry)
+
+        assertThat(adapter.getSectionRegistry()).isSameInstanceAs(sectionRegistry)
+    }
+
     @Test(expected = IllegalStateException::class)
     fun `exception is thrown when adapter does not have registered sections`() {
-        val adapter = ListaAdapter(diffItemCallback)
-        adapter.setList(listOf(1, 2, 3))
+        adapter.submitNow(listOf(1, 2, 3))
         adapter.getItemViewType(0)
     }
 
     @Test
     fun `adapter forwards events to the sections`() {
-        val adapter = ListaAdapter(diffItemCallback)
         val itemViewType = 4
         adapter.setSectionRegistry(ClassSectionRegistry().apply {
             register(IntegerSection(itemViewType = itemViewType))
         })
-        adapter.setList(listOf(0, 1, 2))
+        adapter.submitNow(listOf(0, 1, 2))
 
         val viewHolder = adapter.onCreateViewHolder(mockk(), itemViewType) as TestViewHolder
         setViewType(viewHolder, itemViewType)
@@ -116,4 +190,5 @@ class ListaAdapterTest {
         field.isAccessible = true
         field.setInt(viewHolder, itemViewType)
     }
+
 }

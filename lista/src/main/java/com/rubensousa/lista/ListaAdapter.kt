@@ -17,6 +17,7 @@
 package com.rubensousa.lista
 
 import android.view.ViewGroup
+import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
 import androidx.core.view.children
 import androidx.recyclerview.widget.*
@@ -36,21 +37,23 @@ import java.util.*
  * When the adapter contents are changed through [submitList],
  * [ListaAsyncDiffer] kicks-in to calculate the diff between the previous list and the new list.
  */
-open class ListaAdapter<T>(
-    diffItemCallback: DiffUtil.ItemCallback<T>,
-    defaultSectionRegistry: ListaSectionRegistry = ClassSectionRegistry()
+open class ListaAdapter<T> @VisibleForTesting constructor(
+    differConfig: ListaAsyncDiffer.Config<T>,
+    updateCallback: ListaAsyncDiffer.UpdateCallback? = null
 ) : RecyclerView.Adapter<ListaViewHolder<T>>() {
 
-    private val differ: ListaAsyncDiffer<T>
-    private val updateCallback: AdapterUpdateCallback = AdapterUpdateCallback()
-    private var sectionRegistry: ListaSectionRegistry = defaultSectionRegistry
-
-    init {
-        differ = ListaAsyncDiffer(
-            updateCallback,
-            AsyncDifferConfig.Builder(diffItemCallback).build()
-        )
+    private val differ: ListaAsyncDiffer<T> by lazy {
+        ListaAsyncDiffer(updateCallback ?: AdapterUpdateCallback(this), differConfig)
     }
+    private var sectionRegistry: ListaSectionRegistry = ClassSectionRegistry()
+
+    constructor(
+        diffItemCallback: DiffUtil.ItemCallback<T>
+    ) : this(ListaAsyncDiffer.Config.build(diffItemCallback))
+
+    constructor(
+        differConfig: ListaAsyncDiffer.Config<T>,
+    ) : this(differConfig, null)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListaViewHolder<T> {
         val section = getSection(viewType)
@@ -69,13 +72,19 @@ open class ListaAdapter<T>(
     }
 
     override fun onBindViewHolder(holder: ListaViewHolder<T>, position: Int) {
-        getSection(holder).onViewHolderBound(holder, getItemAt(position), Collections.emptyList())
+        val item = getItemAt(position)
+        if (item != null) {
+            getSection(holder).onViewHolderBound(holder, item, Collections.emptyList())
+        }
     }
 
     override fun onBindViewHolder(
         holder: ListaViewHolder<T>, position: Int, payloads: List<Any>
     ) {
-        getSection(holder).onViewHolderBound(holder, getItemAt(position), payloads)
+        val item = getItemAt(position)
+        if (item != null) {
+            getSection(holder).onViewHolderBound(holder, item, payloads)
+        }
     }
 
     override fun onViewRecycled(holder: ListaViewHolder<T>) {
@@ -106,12 +115,14 @@ open class ListaAdapter<T>(
         return sectionRegistry
     }
 
-    fun getItemAt(position: Int): T = differ.getCurrentList()[position]
+    fun getItemAt(position: Int): T? = differ.getCurrentList()[position]
 
+    @MainThread
     fun clear() {
         submit(listOf())
     }
 
+    @MainThread
     fun clearNow() {
         submitNow(listOf())
     }
@@ -124,7 +135,8 @@ open class ListaAdapter<T>(
      *
      * @param items the new items to be applied to the adapter
      */
-    fun <V : T> submit(items: List<V>, commitCallback: Runnable? = null) {
+    @MainThread
+    fun <V : T> submit(items: List<V?>, commitCallback: Runnable? = null) {
         differ.submitList(items, commitCallback)
     }
 
@@ -134,12 +146,13 @@ open class ListaAdapter<T>(
      * since you can set the items before you bind the adapter.
      *
      * If you want to get the appropriate updates by diffing the old list and the new one,
-     * use [submit]
+     * use [submit] instead.
      *
      * @param items the new items to be applied to the adapter
      */
-    fun <V : T> submitNow(items: List<V>) {
-        differ.submitNow(this, items)
+    @MainThread
+    fun <V : T> submitNow(items: List<V?>) {
+        differ.submitNow(items)
     }
 
     /**
@@ -177,8 +190,7 @@ open class ListaAdapter<T>(
         return viewHolders
     }
 
-    private fun getSection(holder: ListaViewHolder<T>)
-            : ListaSection<T, ListaViewHolder<T>> {
+    private fun getSection(holder: ListaViewHolder<T>): ListaSection<T, ListaViewHolder<T>> {
         @Suppress("UNCHECKED_CAST")
         return (sectionRegistry.getSectionForItemViewType(holder.itemViewType)
             ?: throw IllegalStateException(
@@ -193,30 +205,6 @@ open class ListaAdapter<T>(
             ?: throw IllegalStateException(
                 "No section found for itemViewType: $itemViewType"
             )) as ListaSection<T, ListaViewHolder<T>>
-    }
-
-    private inner class AdapterUpdateCallback : ListUpdateCallback {
-        override fun onChanged(position: Int, count: Int, payload: Any?) {
-            notifyItemRangeChanged(position, count, payload)
-        }
-
-        override fun onMoved(fromPosition: Int, toPosition: Int) {
-            notifyItemMoved(fromPosition, toPosition)
-        }
-
-        override fun onInserted(position: Int, count: Int) {
-            notifyItemRangeInserted(position, count)
-        }
-
-        override fun onRemoved(position: Int, count: Int) {
-            notifyItemRangeRemoved(position, count)
-        }
-
-    }
-
-    @VisibleForTesting
-    fun setList(list: List<T>?) {
-        differ.setList(list)
     }
 
 }

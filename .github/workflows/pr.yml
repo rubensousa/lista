@@ -1,4 +1,4 @@
-name: Dev
+name: Pull requests
 
 on:
   pull_request:
@@ -7,12 +7,7 @@ on:
       - '**/*.txt'
     branches:
       - 'dev'
-  push:
-    paths-ignore:
-      - '**/*.md'
-      - '**/*.txt'
-    branches:
-      - 'dev'
+      - 'master'
 
 jobs:
   build:

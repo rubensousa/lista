@@ -23,10 +23,10 @@ import androidx.recyclerview.widget.RecyclerView
 /**
  * A ViewHolder for a [ListaSection].
  *
- * The item bound to this ViewHolder can be access via [getItem].
- * It'll be set in [onBind] and cleared in [onRecycled].
+ * The item bound to this ViewHolder can be accessed via [getItem].
+ * It'll be set in [onBound] and cleared in [onRecycled].
  */
-abstract class ListaSectionViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
+abstract class ListaViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private var item: T? = null
 
@@ -39,25 +39,16 @@ abstract class ListaSectionViewHolder<T>(itemView: View) : RecyclerView.ViewHold
     /**
      * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onCreateViewHolder]
      */
-    open fun onCreated() {
-    }
-
-    /**
-     * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onBindViewHolder]
-     */
-    @CallSuper
-    open fun onBind(item: T) {
-        this.item = item
-    }
+    open fun onCreated() {}
 
     /**
      * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onBindViewHolder]
      *
      * @param item the item from the adapter that needs to be bound
-     * @param payloads a non-empty list for merged payloads
+     * @param payloads a list for merged payloads. Can be empty
      */
     @CallSuper
-    open fun onBind(item: T, payloads: List<Any>) {
+    open fun onBound(item: T, payloads: List<Any>) {
         this.item = item
     }
 
@@ -66,28 +57,22 @@ abstract class ListaSectionViewHolder<T>(itemView: View) : RecyclerView.ViewHold
      */
     @CallSuper
     open fun onRecycled() {
-        this.item = null
+        item = null
     }
 
     /**
      * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onFailedToRecycleView]
      */
-    open fun onFailedToRecycle(): Boolean {
-        return false
-    }
+    open fun onFailedToRecycle(): Boolean = false
 
     /**
      * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onViewAttachedToWindow]
      */
-    open fun onAttachedToWindow() {
-
-    }
+    open fun onAttachedToWindow() {}
 
     /**
      * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onViewDetachedFromWindow]
      */
-    open fun onDetachedFromWindow() {
-
-    }
+    open fun onDetachedFromWindow() {}
 
 }

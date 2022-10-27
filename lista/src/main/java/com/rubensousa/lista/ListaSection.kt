@@ -19,55 +19,85 @@ package com.rubensousa.lista
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
+import androidx.annotation.CallSuper
+import androidx.viewbinding.ViewBinding
 
 /**
  * A [ListaSection] takes care of showing sections in a [ListaAdapter].
  *
  * Each section needs to provide a unique view type in [getItemViewType],
  * which is [layoutId] by default.
+ *
+ * By default, the [itemViewType] is generated internally by [ListaAdapter]
+ * based on the sections registered, but is set initially to [VIEW_TYPE_AUTO_GENERATED].
+ *
+ * If you're using a shared RecycledViewPool, you should not use [VIEW_TYPE_AUTO_GENERATED]
+ * and instead make the [itemViewType] predetermined and stable.
+ * Example: the resource id of the layout you're going to inflate later.
  */
-abstract class ListaSection<T>(@LayoutRes val layoutId: Int) {
+abstract class ListaSection<T, V : ListaViewHolder<T>>(
+    private var itemViewType: Int = VIEW_TYPE_AUTO_GENERATED
+) {
+
+    companion object {
+        const val VIEW_TYPE_AUTO_GENERATED = -1
+    }
 
     /**
      * @return the ViewHolder to be used by this Section
      */
-    abstract fun onCreateViewHolder(view: View): ListaSectionViewHolder<T>
-
-    /**
-     * @return true if this Section should be used to bind [item] or false otherwise
-     */
-    abstract fun isForItem(item: Any): Boolean
+    abstract fun onCreateViewHolder(parent: ViewGroup): V
 
     /**
      * @return the item view type for [ListaAdapter]. Must be unique per Adapter
      */
     open fun getItemViewType(): Int {
-        return layoutId
+        return itemViewType
+    }
+
+    @CallSuper
+    open fun onViewHolderCreated(holder: V) {
+        holder.onCreated()
+    }
+
+    @CallSuper
+    open fun onViewHolderBound(holder: V, item: T, payloads: List<Any>) {
+        holder.onBound(item, payloads)
+    }
+
+    @CallSuper
+    open fun onViewHolderRecycled(holder: V) {
+        holder.onRecycled()
+    }
+
+    @CallSuper
+    open fun onViewHolderAttachedToWindow(holder: V) {
+        holder.onAttachedToWindow()
+    }
+
+    @CallSuper
+    open fun onViewHolderDetachedFromWindow(holder: V) {
+        holder.onDetachedFromWindow()
+    }
+
+    @CallSuper
+    open fun onFailedToRecycleView(holder: V): Boolean {
+        return holder.onFailedToRecycle()
     }
 
     /**
+     * Helper function to inflate the layout specified in [layoutId]
      * @return the View that'll be used by the ViewHolder
      */
-    open fun inflateLayout(parent: ViewGroup, layoutId: Int): View {
+    protected fun inflate(parent: ViewGroup, layoutId: Int): View {
         return LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
     }
 
     /**
-     * @return the ViewHolder to be used by this Section
+     * Is set by the section registry when [VIEW_TYPE_AUTO_GENERATED] is defined as [itemViewType]
      */
-    open fun onCreateViewHolder(parent: ViewGroup): ListaSectionViewHolder<T> {
-        val holder = onCreateViewHolder(inflateLayout(parent, layoutId))
-        holder.onCreated()
-        return holder
-    }
-
-    open fun onBindViewHolder(holder: ListaSectionViewHolder<T>, item: T) {
-        holder.onBind(item)
-    }
-
-    open fun onBindViewHolder(holder: ListaSectionViewHolder<T>, item: T, payloads: List<Any>) {
-        holder.onBind(item, payloads)
+    internal fun setGeneratedItemViewType(value: Int) {
+        itemViewType = value
     }
 
 }

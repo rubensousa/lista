@@ -16,25 +16,24 @@
 
 package com.rubensousa.lista.sample.sections
 
-import android.view.View
+import android.view.ViewGroup
 import com.rubensousa.lista.ListaSection
-import com.rubensousa.lista.ListaSectionViewHolder
-import com.rubensousa.lista.sample.R
+import com.rubensousa.lista.ListaViewHolder
+import com.rubensousa.lista.viewHolderBinding
 import com.rubensousa.lista.sample.databinding.SectionHeaderBinding
 import com.rubensousa.lista.sample.model.HeaderModel
 
-class HeaderSection : ListaSection<HeaderModel>(R.layout.section_header) {
+class HeaderSection : ListaSection<HeaderModel, HeaderSection.ViewHolder>() {
 
-    override fun onCreateViewHolder(view: View): ListaSectionViewHolder<HeaderModel> = VH(view)
+    override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
+        return ViewHolder(parent.viewHolderBinding(SectionHeaderBinding::inflate))
+    }
 
-    override fun isForItem(item: Any): Boolean = item is HeaderModel
+    class ViewHolder(private val binding: SectionHeaderBinding) :
+        ListaViewHolder<HeaderModel>(binding.root) {
 
-    class VH(view: View) : ListaSectionViewHolder<HeaderModel>(view) {
-
-        private val binding = SectionHeaderBinding.bind(view)
-
-        override fun onBind(item: HeaderModel) {
-            super.onBind(item)
+        override fun onBound(item: HeaderModel, payloads: List<Any>) {
+            super.onBound(item, payloads)
             binding.headerTitleTextView.setText(item.titleResource)
         }
 

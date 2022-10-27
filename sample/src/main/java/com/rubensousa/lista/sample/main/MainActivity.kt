@@ -18,17 +18,25 @@ package com.rubensousa.lista.sample.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.rubensousa.lista.pool.clearSharedRecycledViewPool
+import com.rubensousa.lista.pool.installSharedRecycledViewPool
 import com.rubensousa.lista.sample.R
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSharedRecycledViewPool()
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .add(R.id.container, MainFragment())
                 .commitNow()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        clearSharedRecycledViewPool()
     }
 
 }

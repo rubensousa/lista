@@ -34,64 +34,55 @@ package com.rubensousa.lista
 
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
-import androidx.recyclerview.widget.*
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListUpdateCallback
+import androidx.recyclerview.widget.RecyclerView
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
 /**
  * Extension of [androidx.recyclerview.widget.AsyncListDiffer]
  * that supports submitting lists immediately without applying diffing.
  */
 class ListaAsyncDiffer<T>(
-    private val updateCallback: ListUpdateCallback,
-    private val config: AsyncDifferConfig<T>
+    private val updateCallback: UpdateCallback,
+    private val config: Config<T>
 ) {
 
-    companion object {
-        private val mainThreadExecutor: MainThreadExecutor by lazy { MainThreadExecutor() }
-    }
-
-    private class MainThreadExecutor internal constructor() : Executor {
-        internal val handler = Handler(Looper.getMainLooper())
-        override fun execute(command: Runnable) {
-            handler.post(command)
-        }
-    }
-
+    private val backgroundExecutor = config.backgroundThreadExecutor
+    private val mainExecutor = config.mainThreadExecutor
     private val listeners = CopyOnWriteArrayList<AsyncListDiffer.ListListener<T>>()
-    private var list: List<T>? = null
-    private val emptyList: List<T> = emptyList()
+    private var list: List<T?>? = null
 
     // Max generation of currently scheduled runnable
     private var maxScheduledGeneration: Int = 0
-
-    @VisibleForTesting
-    fun setList(newList: List<T>?) {
-        list = newList
-    }
 
     /**
      * Get the current List - any diffing to present this list has already been computed and
      * dispatched via the ListUpdateCallback.
      *
-     *
      * If a `null` List, or no List has been submitted, an empty list will be returned.
-     *
      *
      * The returned list may not be mutated - mutations to content must be done through
      * [submitList]
      *
      * @return current List.
      */
-    fun getCurrentList(): List<T> {
+    @MainThread
+    fun getCurrentList(): List<T?> {
         if (list == null) {
-            return emptyList
+            return Collections.emptyList()
         }
         return list!!
     }
 
-    fun submitImmediately(adapter: RecyclerView.Adapter<*>, newList: List<T>) {
+    @MainThread
+    fun submitNow(newList: List<T?>) {
         // incrementing generation means any currently-running diffs are discarded when they finish
         maxScheduledGeneration++
         if (newList === list) {
@@ -100,8 +91,8 @@ class ListaAsyncDiffer<T>(
         val oldList = getCurrentList()
         list = newList
         maxScheduledGeneration++
-        adapter.notifyDataSetChanged()
-        onCurrentListChanged(oldList, null)
+        updateCallback.onInvalidated()
+        onCurrentListChanged(oldList)
     }
 
     /**
@@ -122,8 +113,9 @@ class ListaAsyncDiffer<T>(
      * @param commitCallback Optional runnable that is executed when the List is committed, if
      * it is committed.
      */
+    @MainThread
     fun submitList(
-        newList: List<T>?,
+        newList: List<T?>?,
         commitCallback: Runnable? = null
     ) {
         // incrementing generation means any currently-running diffs are discarded when they finish
@@ -157,7 +149,7 @@ class ListaAsyncDiffer<T>(
         }
 
         val oldList = list
-        config.backgroundThreadExecutor.execute {
+        backgroundExecutor.execute {
             val result = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
                 override fun getOldListSize(): Int {
                     return oldList!!.size
@@ -209,7 +201,7 @@ class ListaAsyncDiffer<T>(
                 }
             })
 
-            mainThreadExecutor.execute {
+            mainExecutor.execute {
                 if (maxScheduledGeneration == runGeneration) {
                     latchList(newList, result, commitCallback)
                 }
@@ -245,7 +237,7 @@ class ListaAsyncDiffer<T>(
     }
 
     private fun latchList(
-        newList: List<T>,
+        newList: List<T?>,
         diffResult: DiffUtil.DiffResult,
         commitCallback: Runnable?
     ) {
@@ -255,14 +247,77 @@ class ListaAsyncDiffer<T>(
         onCurrentListChanged(previousList, commitCallback)
     }
 
-    private fun onCurrentListChanged(
-        previousList: List<T>,
-        commitCallback: Runnable?
-    ) {
+    private fun onCurrentListChanged(previousList: List<T?>, commitCallback: Runnable? = null) {
         val currentList = getCurrentList()
         for (listener in listeners) {
             listener.onCurrentListChanged(previousList, currentList)
         }
         commitCallback?.run()
     }
+
+    class Config<T> private constructor(
+        val diffCallback: DiffUtil.ItemCallback<T>,
+        val mainThreadExecutor: Executor,
+        val backgroundThreadExecutor: Executor
+    ) {
+
+        companion object {
+
+            private val mainThreadExecutor: MainThreadExecutor by lazy { MainThreadExecutor() }
+            private var defaultBackgroundExecutor: Executor? = null
+            private val defaultExecutorLock = Any()
+
+            @JvmStatic
+            fun <T> build(diffCallback: DiffUtil.ItemCallback<T>): Config<T> {
+                return Config(diffCallback, mainThreadExecutor, getOrCreateBackgroundExecutor())
+            }
+
+            @JvmStatic
+            fun <T> build(
+                diffCallback: DiffUtil.ItemCallback<T>,
+                backgroundExecutor: Executor
+            ): Config<T> {
+                return Config(diffCallback, mainThreadExecutor, backgroundExecutor)
+            }
+
+            @VisibleForTesting
+            fun <T> buildTest(
+                diffCallback: DiffUtil.ItemCallback<T>,
+                mainThreadExecutor: Executor,
+                backgroundExecutor: Executor = getOrCreateBackgroundExecutor()
+            ): Config<T> {
+                return Config(diffCallback, mainThreadExecutor, backgroundExecutor)
+            }
+
+            private fun getOrCreateBackgroundExecutor(): Executor {
+                val backgroundExecutor =
+                    defaultBackgroundExecutor ?: synchronized(defaultExecutorLock) {
+                        val newExecutor = Executors.newFixedThreadPool(4)
+                        defaultBackgroundExecutor = newExecutor
+                        newExecutor
+                    }
+                return backgroundExecutor
+            }
+
+        }
+
+        private class MainThreadExecutor : Executor {
+            private val handler = Handler(Looper.getMainLooper())
+            override fun execute(command: Runnable) {
+                handler.post(command)
+            }
+        }
+
+    }
+
+
+    interface UpdateCallback : ListUpdateCallback {
+
+        /**
+         * Called when the entire adapter contents should be invalidated.
+         * This should trigger [RecyclerView.Adapter.notifyDataSetChanged]
+         */
+        fun onInvalidated()
+    }
+
 }

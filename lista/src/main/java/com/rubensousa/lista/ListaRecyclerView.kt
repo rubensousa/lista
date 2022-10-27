@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Rúben Sousa
+ * Copyright 2022 Rúben Sousa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.nested
+package com.rubensousa.lista
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.recyclerview.widget.RecyclerView
-import com.rubensousa.lista.R
 
 /**
  * A RecyclerView that only handles scroll events with the same orientation of its LayoutManager.
@@ -43,6 +43,7 @@ class ListaRecyclerView : RecyclerView {
 
     constructor(context: Context) : this(context, null)
 
+    @SuppressLint("PrivateResource")
     constructor(context: Context, attrs: AttributeSet?) : this(
         context,
         attrs,

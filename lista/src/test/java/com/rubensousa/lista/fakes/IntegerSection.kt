@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.paging
+package com.rubensousa.lista.fakes
 
-/**
- * An object that contains the first and last visible positions of a RecyclerView Adapter
- */
-data class ListaPage(
-    var firstVisiblePosition: Int,
-    var lastVisiblePosition: Int
-)
+import android.view.ViewGroup
+import com.rubensousa.lista.ListaSection
+
+class IntegerSection(itemViewType: Int = VIEW_TYPE_AUTO_GENERATED) :
+    ListaSection<Int, TestViewHolder<Int>>(itemViewType) {
+
+    override fun onCreateViewHolder(parent: ViewGroup): TestViewHolder<Int> {
+        return TestViewHolder.create()
+    }
+
+}

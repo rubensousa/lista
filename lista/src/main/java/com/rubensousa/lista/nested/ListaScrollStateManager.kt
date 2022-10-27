@@ -35,22 +35,22 @@ package com.rubensousa.lista.nested
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.recyclerview.widget.RecyclerView
-import com.rubensousa.lista.ListaSectionViewHolder
+import com.rubensousa.lista.ListaViewHolder
 import com.rubensousa.lista.R
 
 /**
  * Persists scroll state for nested RecyclerViews.
  *
- * 1. Call [saveScrollState] in [ListaSectionViewHolder.onRecycled] to save the scroll position.
+ * 1. Call [saveScrollState] in [ListaViewHolder.onRecycled] to save the scroll position.
  * If you're recycling detached views, you'll also need to call it in
- * [ListaSectionViewHolder.onDetachedFromWindow].
+ * [ListaViewHolder.onDetachedFromWindow].
  *
- * 2. Call [restoreScrollState] in [ListaSectionViewHolder.onBind]
+ * 2. Call [restoreScrollState] in [ListaViewHolder.onBound]
  * after changing the adapter contents to restore the scroll position.
  * If you're recycling detached views, you'll also need to call it in
- * [ListaSectionViewHolder.onAttachedToWindow]
+ * [ListaViewHolder.onAttachedToWindow]
  */
-class ListaScrollStateManager(savedInstanceState: Bundle? = null) {
+class ListaScrollStateManager {
 
     companion object {
         const val STATE_BUNDLE = "scroll_state_bundle"
@@ -66,10 +66,6 @@ class ListaScrollStateManager(savedInstanceState: Bundle? = null) {
      * that have new scroll states that should be saved
      */
     private val scrolledKeys = mutableSetOf<String>()
-
-    init {
-        onRestoreInstanceState(savedInstanceState)
-    }
 
     fun setupRecyclerView(recyclerView: RecyclerView) {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

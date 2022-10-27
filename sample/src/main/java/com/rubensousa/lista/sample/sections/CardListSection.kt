@@ -17,45 +17,45 @@
 package com.rubensousa.lista.sample.sections
 
 import android.view.View
+import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.cabriole.decorator.LinearMarginDecoration
+import com.rubensousa.decorator.LinearMarginDecoration
 import com.rubensousa.lista.ListaAdapter
-import com.rubensousa.lista.ListaSectionViewHolder
 import com.rubensousa.lista.nested.ListaNestedSection
-import com.rubensousa.lista.nested.ListaNestedSectionViewHolder
+import com.rubensousa.lista.nested.ListaNestedViewHolder
 import com.rubensousa.lista.nested.ListaScrollStateManager
+import com.rubensousa.lista.pool.getActivityScopedRecycledViewPool
 import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.databinding.SectionCardListBinding
 import com.rubensousa.lista.sample.model.CardListModel
+import com.rubensousa.lista.section.ItemSectionRegistry
 
 class CardListSection(
-    recycledViewPool: RecyclerView.RecycledViewPool,
     scrollStateManager: ListaScrollStateManager
-) : ListaNestedSection<CardListModel>(
-    layoutId = R.layout.section_card_list,
-    recycledViewPool = recycledViewPool,
+) : ListaNestedSection<CardListModel, CardListSection.VH>(
+    itemViewType = R.layout.section_card_list,
     scrollStateManager = scrollStateManager
 ) {
 
-    override fun onCreateViewHolder(view: View): ListaSectionViewHolder<CardListModel> {
-        return VH(view, recycledViewPool, scrollStateManager)
+    override fun onCreateViewHolder(parent: ViewGroup): VH {
+        return VH(inflate(parent, R.layout.section_card_list))
     }
 
-    override fun isForItem(item: Any): Boolean = item is CardListModel
-
-    class VH(
-        view: View,
-        recycledViewPool: RecyclerView.RecycledViewPool,
-        scrollStateManager: ListaScrollStateManager
-    ) : ListaNestedSectionViewHolder<CardListModel>(view, recycledViewPool, scrollStateManager) {
+    class VH(view: View) : ListaNestedViewHolder<CardListModel>(view) {
 
         private val binding = SectionCardListBinding.bind(view)
         private val adapter = ListaAdapter(ListModelDiffCallback())
 
+        override fun getRecycledViewPool(): RecyclerView.RecycledViewPool {
+            return getActivityScopedRecycledViewPool()
+        }
+
         override fun onCreated() {
             super.onCreated()
-            adapter.addSection(CardSection())
+            adapter.setSectionRegistry(ItemSectionRegistry().apply {
+                registerForInstance(CardSection())
+            })
             val layoutManager = LinearLayoutManager(
                 binding.cardRecyclerView.context, RecyclerView.HORIZONTAL, false
             )
@@ -76,11 +76,11 @@ class CardListSection(
         }
 
         override fun updateAdapter(item: CardListModel) {
-            adapter.submitList(item.items, applyDiffing = false)
+            adapter.submitNow(item.items)
         }
 
-        override fun onBind(item: CardListModel) {
-            super.onBind(item)
+        override fun onBound(item: CardListModel, payloads: List<Any>) {
+            super.onBound(item, payloads)
             itemView.tag = item.id
         }
 
@@ -90,7 +90,7 @@ class CardListSection(
 
         override fun getScrollStateKey(item: CardListModel): String = item.getId()
 
-        override fun recycleChildrenOnDetach(): Boolean = true
+        override fun isRecyclingChildrenOnDetachedFromWindow(): Boolean = true
 
     }
 

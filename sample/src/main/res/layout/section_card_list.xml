@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<com.rubensousa.lista.nested.ListaRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.rubensousa.lista.ListaRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/cardRecyclerView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

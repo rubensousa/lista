@@ -35,10 +35,12 @@ class ListaPager(
 ) : RecyclerView.OnScrollListener() {
 
     interface OnPageChangedListener {
-        fun onPageChanged(page: ListaPage)
+        fun onPageChanged(firstVisiblePosition: Int, lastVisiblePosition: Int)
     }
 
-    private val page = ListaPage(firstVisiblePosition = 0, lastVisiblePosition = 0)
+    private var firstVisiblePosition = 0
+    private var lastVisiblePosition = 0
+    var isEnabled = true
 
     fun setLayoutManager(layoutManager: LinearLayoutManager) {
         linearLayoutManager = layoutManager
@@ -46,13 +48,15 @@ class ListaPager(
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
-
-        val firstVisiblePosition = linearLayoutManager.findFirstVisibleItemPosition()
-        val lastVisiblePosition = linearLayoutManager.findLastVisibleItemPosition()
+        if (!isEnabled) {
+            return
+        }
+        val newFirstVisiblePosition = linearLayoutManager.findFirstVisibleItemPosition()
+        val newLastVisiblePosition = linearLayoutManager.findLastVisibleItemPosition()
 
         // Check for invalid positions
-        if (firstVisiblePosition == RecyclerView.NO_POSITION ||
-            lastVisiblePosition == RecyclerView.NO_POSITION
+        if (newFirstVisiblePosition == RecyclerView.NO_POSITION
+            || newLastVisiblePosition == RecyclerView.NO_POSITION
         ) {
             return
         }
@@ -63,17 +67,13 @@ class ListaPager(
             return
         }
         // Just notify if the new page is different
-        if (firstVisiblePosition != page.firstVisiblePosition
-            || lastVisiblePosition != page.lastVisiblePosition
+        if (newFirstVisiblePosition != firstVisiblePosition
+            || newLastVisiblePosition != lastVisiblePosition
         ) {
-            page.firstVisiblePosition = firstVisiblePosition
-            page.lastVisiblePosition = lastVisiblePosition
-            pageListener.onPageChanged(page.copy())
+            firstVisiblePosition = newFirstVisiblePosition
+            lastVisiblePosition = newLastVisiblePosition
+            pageListener.onPageChanged(firstVisiblePosition, lastVisiblePosition)
         }
-    }
-
-    fun getCurrentPage(): ListaPage {
-        return page.copy()
     }
 
 }

@@ -6,13 +6,11 @@ It also comes with useful Espresso extensions that help you build UI tests that 
 ## Install
 
 ```groovy
- implementation 'com.rubensousa.lista:lista:1.0.0'
+ implementation 'com.rubensousa.lista:lista:3.0.0'
  
  // Optional Espresso test extensions
- androidTestImplementation 'com.rubensousa.lista:lista-testing:1.0.0'
+ androidTestImplementation 'com.rubensousa.lista:lista-testing:3.0.0'
 ```
-
-Replace x.x.x with the latest version available
 
 
 ## Basic Setup
@@ -20,29 +18,18 @@ Replace x.x.x with the latest version available
 1. Define a ListaSection. Example:
 
 ```kotlin
-class CardSection : ListaSection<CardModel>(R.layout.section_card) {
+class CardSection : ListaSection<CardModel, CardSection.VH>() {
 
-    /**
-     * @return the ViewHolder to be used by this Section
-     */
-    override fun onCreateViewHolder(view: View) : ListaSectionViewHolder<CardModel> {
-        return VH(view)
+    override fun onCreateViewHolder(parent: ViewGroup): VH {
+        return VH(inflate(parent, R.layout.section_card))
     }
-
-    /**
-     * @return true if this Section should be used to bind [item] or false otherwise
-     */
-    override fun isForItem(item: Any): Boolean = item is CardModel
 
     class VH(view: View) :  ListaSectionViewHolder<CardModel>(view) {
 
         private val binding = SectionCardBinding.bind(view)
 
-        /**
-         * Called after onBindViewHolder
-         */
-        override fun onBind(item: CardModel) {
-            super.onBind(item)
+        override fun onBound(item: CardModel, payloads: List<Any>) {
+            super.onBound(item, payloads)
             binding.title.text = item.title
             binding.title.isVisible = item.showTitle
         }
@@ -51,7 +38,14 @@ class CardSection : ListaSection<CardModel>(R.layout.section_card) {
 }
 ```
 
-2. Create a ListaAdapter and register your sections:
+2. Create a `ListaSectionRegistry` like `ClassSectionRegistry` and register your sections:
+
+```kotlin
+val sectionRegistry = ClassSectionRegistry()
+sectionRegistry.register(CardSection())
+```
+
+3. Create a ListaAdapter and assign the `ListaSectionRegistry` you created:
 
 ```kotlin
 val diffItemCallback = object : DiffUtil.ItemCallback<SectionModel>() {
@@ -67,19 +61,17 @@ val diffItemCallback = object : DiffUtil.ItemCallback<SectionModel>() {
 }
 
 val adapter = ListaAdapter(diffItemCallback)
-adapter.addSection(CardSection())
+adapter.setSectionRegistry(sectionRegistry)
 ```
 
-3. Use `submitList` to dispatch items to the adapter:
+4. Use `submit` or `submitNow` to dispatch items to the adapter:
 
 ```kotlin
 val adapterContentList = listOf(
     CardModel(title = "test", titleVisible = true)
 )
-adapter.submitList(adapterContentList)
+adapter.submit(adapterContentList)
 ```
-
-This will apply diffing automatically and call the appropriate `notify` methods.
 
 
 ## Nested lists
@@ -92,37 +84,25 @@ and a `ListaScrollStateManager` to persist their scroll state.
 
 
 ```kotlin
-class CardListSection : ListaNestedSection<CardListModel>(R.layout.section_card_list) {
+class CardListSection : ListaNestedSection<CardListModel, CardListSection.VH>() {
 
-    override fun onCreateViewHolder(view: View): ListaSectionViewHolder<CardListModel> {
-        // Uses the default recycledViewPool and scrollStateManager
-        return VH(view, recycledViewPool, scrollStateManager)
+    override fun onCreateViewHolder(parent: ViewGroup): VH {
+        return VH(inflate(parent, R.layout.card_list))
     }
 
-    override fun isForItem(item: Any): Boolean = item is CardListModel
 
-    class VH(
-        view: View,
-        recycledViewPool: RecyclerView.RecycledViewPool,
-        scrollStateManager: ListaScrollStateManager
-    ) : ListaNestedSectionViewHolder<CardListModel>(view, recycledViewPool, scrollStateManager) {
+    class VH(view: View) : ListaNestedSectionViewHolder<CardListModel>(view) {
 
         private val binding = SectionCardListBinding.bind(view)
         private val adapter = ListaAdapter(ListModelDiffCallback())
 
         override fun onCreated() {
             super.onCreated()
-            adapter.addSection(CardSection())
-            val layoutManager = LinearLayoutManager(
-                binding.cardRecyclerView.context, RecyclerView.HORIZONTAL, false
-            )
-            layoutManager.recycleChildrenOnDetach = true
-            binding.cardRecyclerView.layoutManager = layoutManager
-            binding.cardRecyclerView.adapter = adapter
+            // Setup your RecyclerView here
         }
 
         override fun updateAdapter(item: CardListModel) {
-            adapter.submitList(item.items, applyDiffing = false)
+            adapter.submitNow(item.list)
         }
         
         override fun getRecyclerView(): RecyclerView = binding.cardRecyclerView

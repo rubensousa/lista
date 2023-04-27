@@ -55,35 +55,15 @@ abstract class ListaSection<T, V : ListaViewHolder<T>>(
         return itemViewType
     }
 
-    @CallSuper
-    open fun onViewHolderCreated(holder: V) {
-        holder.onCreated()
-    }
+    open fun onViewHolderCreated(holder: V) {}
 
-    @CallSuper
-    open fun onViewHolderBound(holder: V, item: T, payloads: List<Any>) {
-        holder.onBound(item, payloads)
-    }
+    open fun onViewHolderBound(holder: V, item: T, payloads: List<Any>) {}
 
-    @CallSuper
-    open fun onViewHolderRecycled(holder: V) {
-        holder.onRecycled()
-    }
+    open fun onViewHolderRecycled(holder: V) {}
 
-    @CallSuper
-    open fun onViewHolderAttachedToWindow(holder: V) {
-        holder.onAttachedToWindow()
-    }
+    open fun onViewHolderAttachedToWindow(holder: V) {}
 
-    @CallSuper
-    open fun onViewHolderDetachedFromWindow(holder: V) {
-        holder.onDetachedFromWindow()
-    }
-
-    @CallSuper
-    open fun onFailedToRecycleView(holder: V): Boolean {
-        return holder.onFailedToRecycle()
-    }
+    open fun onViewHolderDetachedFromWindow(holder: V) {}
 
     /**
      * Helper function to inflate the layout specified in [layoutId]
@@ -91,6 +71,12 @@ abstract class ListaSection<T, V : ListaViewHolder<T>>(
      */
     protected fun inflate(parent: ViewGroup, layoutId: Int): View {
         return LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
+    }
+
+    protected fun <T: ViewBinding> ViewGroup.bindingOf(
+        factory: (LayoutInflater, ViewGroup, Boolean) -> T
+    ): T {
+        return factory(LayoutInflater.from(context), this, false)
     }
 
     /**

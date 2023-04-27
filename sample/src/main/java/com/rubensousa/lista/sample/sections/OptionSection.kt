@@ -20,7 +20,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.rubensousa.lista.ListaSection
 import com.rubensousa.lista.ListaViewHolder
-import com.rubensousa.lista.viewHolderBinding
 import com.rubensousa.lista.sample.databinding.SectionOptionBinding
 import com.rubensousa.lista.sample.model.OptionModel
 
@@ -32,7 +31,7 @@ class OptionSection(private val onOptionClickListener: OnOptionClickListener) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
-        return ViewHolder(parent.viewHolderBinding(SectionOptionBinding::inflate))
+        return ViewHolder(parent.bindingOf(SectionOptionBinding::inflate))
     }
 
     override fun onViewHolderBound(holder: ViewHolder, item: OptionModel, payloads: List<Any>) {

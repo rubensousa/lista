@@ -53,11 +53,14 @@ open class ListaAdapter<T> @VisibleForTesting constructor(
 
     constructor(
         differConfig: ListaAsyncDiffer.Config<T>,
-    ) : this(differConfig, null)
+    ) : this(differConfig, null) {
+        stateRestorationPolicy = StateRestorationPolicy.PREVENT_WHEN_EMPTY
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListaViewHolder<T> {
         val section = getSection(viewType)
         val viewHolder = section.onCreateViewHolder(parent)
+        viewHolder.onCreated()
         section.onViewHolderCreated(viewHolder)
         return viewHolder
     }
@@ -74,6 +77,7 @@ open class ListaAdapter<T> @VisibleForTesting constructor(
     override fun onBindViewHolder(holder: ListaViewHolder<T>, position: Int) {
         val item = getItemAt(position)
         if (item != null) {
+            holder.bind(item, Collections.emptyList())
             getSection(holder).onViewHolderBound(holder, item, Collections.emptyList())
         }
     }
@@ -83,24 +87,28 @@ open class ListaAdapter<T> @VisibleForTesting constructor(
     ) {
         val item = getItemAt(position)
         if (item != null) {
+            holder.bind(item, payloads)
             getSection(holder).onViewHolderBound(holder, item, payloads)
         }
     }
 
     override fun onViewRecycled(holder: ListaViewHolder<T>) {
+        holder.recycle()
         getSection(holder).onViewHolderRecycled(holder)
     }
 
     override fun onViewAttachedToWindow(holder: ListaViewHolder<T>) {
+        holder.onAttachedToWindow()
         getSection(holder).onViewHolderAttachedToWindow(holder)
     }
 
     override fun onViewDetachedFromWindow(holder: ListaViewHolder<T>) {
+        holder.onDetachedFromWindow()
         getSection(holder).onViewHolderDetachedFromWindow(holder)
     }
 
     override fun onFailedToRecycleView(holder: ListaViewHolder<T>): Boolean {
-        return getSection(holder).onFailedToRecycleView(holder)
+        return holder.onFailedToRecycle()
     }
 
     override fun getItemCount(): Int {

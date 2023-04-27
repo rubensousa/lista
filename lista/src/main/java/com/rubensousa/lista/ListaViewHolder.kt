@@ -41,23 +41,29 @@ abstract class ListaViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(item
      */
     open fun onCreated() {}
 
+    internal fun bind(item: T, payloads: List<Any>) {
+        this.item = item
+        onBound(item, payloads)
+    }
+
     /**
      * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onBindViewHolder]
      *
      * @param item the item from the adapter that needs to be bound
      * @param payloads a list for merged payloads. Can be empty
      */
-    @CallSuper
-    open fun onBound(item: T, payloads: List<Any>) {
-        this.item = item
+    open fun onBound(item: T, payloads: List<Any>) {}
+
+    internal fun recycle() {
+        onRecycled()
+        item = null
     }
 
     /**
      * Called after [androidx.recyclerview.widget.RecyclerView.Adapter.onViewRecycled]
+     * Calling [getItem] here will still return the previous item bound
      */
-    @CallSuper
     open fun onRecycled() {
-        item = null
     }
 
     /**

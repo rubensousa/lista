@@ -29,7 +29,7 @@ typealias SectionItemMatcher = (item: Any) -> Boolean
  * [registerForMatcher] will register a [ListaSection]
  * for a [SectionItemMatcher] for maximum flexibility
  */
-open class ItemSectionRegistry : ListaSectionRegistry() {
+open class MatcherSectionRegistry : ListaSectionRegistry() {
 
     private val sectionMatchers = LinkedHashMap<SectionItemMatcher, ListaSection<*, *>>()
 

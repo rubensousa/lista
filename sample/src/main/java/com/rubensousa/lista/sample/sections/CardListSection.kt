@@ -29,7 +29,7 @@ import com.rubensousa.lista.pool.getActivityScopedRecycledViewPool
 import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.databinding.SectionCardListBinding
 import com.rubensousa.lista.sample.model.CardListModel
-import com.rubensousa.lista.section.ItemSectionRegistry
+import com.rubensousa.lista.section.MatcherSectionRegistry
 
 class CardListSection(
     scrollStateManager: ListaScrollStateManager
@@ -53,7 +53,7 @@ class CardListSection(
 
         override fun onCreated() {
             super.onCreated()
-            adapter.setSectionRegistry(ItemSectionRegistry().apply {
+            adapter.setSectionRegistry(MatcherSectionRegistry().apply {
                 registerForInstance(CardSection())
             })
             val layoutManager = LinearLayoutManager(

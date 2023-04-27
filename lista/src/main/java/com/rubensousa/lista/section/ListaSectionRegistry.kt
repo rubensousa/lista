@@ -27,7 +27,7 @@ import kotlin.collections.LinkedHashMap
  *
  * Call [registerSection] in your child classes to register your section
  *
- * Check [ClassSectionRegistry] and [ItemSectionRegistry] for some default implementations.
+ * Check [ClassSectionRegistry] and [MatcherSectionRegistry] for some default implementations.
  */
 abstract class ListaSectionRegistry {
 

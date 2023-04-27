@@ -23,7 +23,7 @@ import com.rubensousa.lista.fakes.StringSection
 import com.rubensousa.lista.fakes.TestViewHolder
 import com.rubensousa.lista.section.ClassSectionRegistry
 import com.rubensousa.lista.section.ConcatSectionRegistry
-import com.rubensousa.lista.section.ItemSectionRegistry
+import com.rubensousa.lista.section.MatcherSectionRegistry
 import org.junit.Test
 
 class SectionRegistryTest {
@@ -53,7 +53,7 @@ class SectionRegistryTest {
 
     @Test
     fun `section is found from item matcher`() {
-        val registry = ItemSectionRegistry()
+        val registry = MatcherSectionRegistry()
         val firstSection = StringSection()
         val secondSection = StringSection()
         registry.registerForMatcher(firstSection) { item ->

@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion versions.compileSdk
+    namespace "com.rubensousa.lista.sample"
 
     defaultConfig {
         applicationId "com.rubensousa.lista.sample"

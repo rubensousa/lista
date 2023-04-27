@@ -47,7 +47,7 @@ class ListaRecyclerView : RecyclerView {
     constructor(context: Context, attrs: AttributeSet?) : this(
         context,
         attrs,
-        R.attr.recyclerViewStyle
+        androidx.recyclerview.R.attr.recyclerViewStyle
     )
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(

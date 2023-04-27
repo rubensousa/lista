@@ -4,6 +4,7 @@ apply plugin: 'kover'
 
 android {
     compileSdkVersion versions.compileSdk
+    namespace "com.rubensousa.lista"
 
     defaultConfig {
         minSdkVersion versions.minSdk

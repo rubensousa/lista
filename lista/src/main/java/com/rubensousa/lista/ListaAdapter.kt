@@ -45,7 +45,7 @@ open class ListaAdapter<T> @VisibleForTesting constructor(
     private val differ: ListaAsyncDiffer<T> by lazy {
         ListaAsyncDiffer(updateCallback ?: AdapterUpdateCallback(this), differConfig)
     }
-    private var sectionRegistry: ListaSectionRegistry = ClassSectionRegistry()
+    private var sectionRegistry: ListaSectionRegistry<T> = ClassSectionRegistry()
 
     constructor(
         diffItemCallback: DiffUtil.ItemCallback<T>
@@ -115,11 +115,11 @@ open class ListaAdapter<T> @VisibleForTesting constructor(
         return differ.getCurrentList().size
     }
 
-    fun setSectionRegistry(newSectionRegistry: ListaSectionRegistry) {
+    fun setSectionRegistry(newSectionRegistry: ListaSectionRegistry<T>) {
         sectionRegistry = newSectionRegistry
     }
 
-    fun getSectionRegistry(): ListaSectionRegistry {
+    fun getSectionRegistry(): ListaSectionRegistry<T> {
         return sectionRegistry
     }
 

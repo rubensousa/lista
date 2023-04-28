@@ -16,7 +16,6 @@
 
 package com.rubensousa.lista.section
 
-import androidx.annotation.NonNull
 import com.rubensousa.lista.ListaSection
 import java.util.*
 import kotlin.collections.LinkedHashMap
@@ -29,24 +28,24 @@ import kotlin.collections.LinkedHashMap
  *
  * Check [ClassSectionRegistry] and [MatcherSectionRegistry] for some default implementations.
  */
-abstract class ListaSectionRegistry {
+abstract class ListaSectionRegistry<T> {
 
-    private val sectionsPerViewType = LinkedHashMap<Int, ListaSection<*, *>>()
+    private val sectionsPerViewType = LinkedHashMap<Int, ListaSection<out T, *>>()
 
-    abstract fun <T> getSectionForItem(@NonNull item: T): ListaSection<*, *>?
+    abstract fun getSectionForItem(item: T?): ListaSection<out T, *>?
 
-    open fun getSectionForItemViewType(itemViewType: Int): ListaSection<*, *>? {
+    open fun getSectionForItemViewType(itemViewType: Int): ListaSection<out T, *>? {
         return sectionsPerViewType[itemViewType]
     }
 
-    open fun getSections(): List<ListaSection<*, *>> {
+    open fun getSections(): List<ListaSection<out T, *>> {
         if (sectionsPerViewType.isEmpty()) {
             return Collections.emptyList()
         }
         return sectionsPerViewType.values.toList()
     }
 
-    protected fun registerSection(section: ListaSection<*, *>) {
+    protected fun <V: T> registerSection(section: ListaSection<V, *>) {
         if (section.getItemViewType() == ListaSection.VIEW_TYPE_AUTO_GENERATED) {
             // Set the id starting from negative numbers
             // to avoid any collision from ids set by the user

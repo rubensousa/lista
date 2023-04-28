@@ -67,7 +67,7 @@ class ListaAdapterTest {
     fun `adapter returns itemViewTypes from sections`() {
         val integerSection = IntegerSection()
         val stringSection = StringSection()
-        adapter.setSectionRegistry(ClassSectionRegistry().apply {
+        adapter.setSectionRegistry(ClassSectionRegistry<Any>().apply {
             register(integerSection)
             register(stringSection)
         })
@@ -127,7 +127,7 @@ class ListaAdapterTest {
         val integerSection = IntegerSection()
         val stringSection = StringSection()
 
-        val sectionRegistry = ClassSectionRegistry().apply {
+        val sectionRegistry = ClassSectionRegistry<Any>().apply {
             register(integerSection)
             register(stringSection)
         }
@@ -146,7 +146,7 @@ class ListaAdapterTest {
     @Test
     fun `adapter forwards events to the sections`() {
         val itemViewType = 4
-        adapter.setSectionRegistry(ClassSectionRegistry().apply {
+        adapter.setSectionRegistry(ClassSectionRegistry<Any>().apply {
             register(IntegerSection(itemViewType = itemViewType))
         })
         adapter.submitNow(listOf(0, 1, 2))

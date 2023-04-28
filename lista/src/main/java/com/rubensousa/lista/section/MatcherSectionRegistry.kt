@@ -18,7 +18,6 @@ package com.rubensousa.lista.section
 
 import com.rubensousa.lista.ListaSection
 
-typealias SectionItemMatcher = (item: Any) -> Boolean
 
 /**
  * A [ListaSectionRegistry] that matches a certain [ListaSection]
@@ -26,29 +25,46 @@ typealias SectionItemMatcher = (item: Any) -> Boolean
  *
  * [registerForInstance] will register a [ListaSection] for an object instance of type T
  *
- * [registerForMatcher] will register a [ListaSection]
+ * [register] will register a [ListaSection]
  * for a [SectionItemMatcher] for maximum flexibility
  */
-open class MatcherSectionRegistry : ListaSectionRegistry() {
+open class MatcherSectionRegistry<T> : ListaSectionRegistry<T>() {
 
-    private val sectionMatchers = LinkedHashMap<SectionItemMatcher, ListaSection<*, *>>()
+    private val sectionMatchers = LinkedHashMap<SectionItemMatcher<T>, ListaSection<out T, *>>()
 
-    inline fun <reified T> registerForInstance(section: ListaSection<T, *>) {
-        registerForMatcher(section) { item -> item is T }
-    }
-
-    fun registerForMatcher(section: ListaSection<*, *>, itemMatcher: SectionItemMatcher) {
-        sectionMatchers[itemMatcher] = section
-        registerSection(section)
-    }
-
-    override fun <T> getSectionForItem(item: T): ListaSection<*, *>? {
+    override fun getSectionForItem(item: T?): ListaSection<out T, *>? {
         sectionMatchers.keys.forEach { matcher ->
-            if (matcher(item as Any)) {
+            if (item != null && matcher.matches(item)) {
                 return sectionMatchers[matcher]
             }
         }
         return null
+    }
+
+    inline fun <reified V : T> registerForInstance(section: ListaSection<out V, *>) {
+        register(section, object : SectionItemMatcher<T> {
+            override fun matches(item: T): Boolean {
+                return item is V
+            }
+        })
+    }
+
+    fun register(section: ListaSection<out T, *>, matcher: (item: T) -> Boolean) {
+        register(section, object : SectionItemMatcher<T> {
+            override fun matches(item: T): Boolean {
+                return matcher(item)
+            }
+        })
+        registerSection(section)
+    }
+
+    fun register(section: ListaSection<out T, *>, matcher: SectionItemMatcher<T>) {
+        sectionMatchers[matcher] = section
+        registerSection(section)
+    }
+
+    interface SectionItemMatcher<T> {
+        fun matches(item: T): Boolean
     }
 
 }

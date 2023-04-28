@@ -30,7 +30,7 @@ class SectionRegistryTest {
 
     @Test
     fun `unique itemViewType is generated`() {
-        val registry = ClassSectionRegistry()
+        val registry = ClassSectionRegistry<Any>()
         val stringSection = StringSection()
         val integerSection = IntegerSection()
         registry.register(stringSection)
@@ -42,7 +42,7 @@ class SectionRegistryTest {
 
     @Test
     fun `section is found from class instance`() {
-        val registry = ClassSectionRegistry()
+        val registry = ClassSectionRegistry<Any>()
         val section = StringSection()
         registry.register(section)
 
@@ -53,13 +53,13 @@ class SectionRegistryTest {
 
     @Test
     fun `section is found from item matcher`() {
-        val registry = MatcherSectionRegistry()
+        val registry = MatcherSectionRegistry<Any>()
         val firstSection = StringSection()
         val secondSection = StringSection()
-        registry.registerForMatcher(firstSection) { item ->
+        registry.register(firstSection) { item ->
             item is String && item.length < 2
         }
-        registry.registerForMatcher(secondSection) { item ->
+        registry.register(secondSection) { item ->
             item is String && item.length >= 2
         }
         assertThat(registry.getSectionForItem("A")).isSameInstanceAs(firstSection)
@@ -70,7 +70,7 @@ class SectionRegistryTest {
     fun `placeholder section is found from ConcatSectionRegistry`() {
         val registry = ConcatSectionRegistry()
 
-        val classRegistry = ClassSectionRegistry()
+        val classRegistry = ClassSectionRegistry<Any>()
         val stringSection = StringSection()
         classRegistry.register(stringSection)
         registry.addRegistry(classRegistry)

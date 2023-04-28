@@ -29,6 +29,7 @@ import com.rubensousa.lista.pool.getActivityScopedRecycledViewPool
 import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.databinding.SectionCardListBinding
 import com.rubensousa.lista.sample.model.CardListModel
+import com.rubensousa.lista.sample.model.SectionModel
 import com.rubensousa.lista.section.MatcherSectionRegistry
 
 class CardListSection(
@@ -53,7 +54,7 @@ class CardListSection(
 
         override fun onCreated() {
             super.onCreated()
-            adapter.setSectionRegistry(MatcherSectionRegistry().apply {
+            adapter.setSectionRegistry(MatcherSectionRegistry<SectionModel>().apply {
                 registerForInstance(CardSection())
             })
             val layoutManager = LinearLayoutManager(

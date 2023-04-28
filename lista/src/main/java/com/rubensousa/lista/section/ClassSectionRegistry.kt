@@ -25,21 +25,27 @@ import com.rubensousa.lista.ListaViewHolder
  * Use [register] to add a [ListaSection] bound to the its type.
  *
  */
-open class ClassSectionRegistry : ListaSectionRegistry() {
+open class ClassSectionRegistry<T> : ListaSectionRegistry<T>() {
 
-    private val sections = LinkedHashMap<Class<*>, ListaSection<*, *>>()
+    private val sections = LinkedHashMap<Class<out T>, ListaSection<out T, *>>()
 
-    inline fun <reified T, VH: ListaViewHolder<T>> register(section: ListaSection<T, VH>) {
-        registerForClass(section, T::class.java)
+    override fun getSectionForItem(item: T?): ListaSection<out T, *>? {
+        val nonNullItem = item ?: return null
+        return sections[nonNullItem::class.java]
     }
 
-    fun registerForClass(section: ListaSection<*, *>, clazz: Class<*>) {
+    inline fun <reified V : T> register(section: ListaSection<V, *>): ClassSectionRegistry<T> {
+        registerForClass(section, V::class.java)
+        return this
+    }
+
+    fun <V : T> registerForClass(
+        section: ListaSection<V, *>,
+        clazz: Class<V>
+    ): ClassSectionRegistry<T> {
         sections[clazz] = section
         registerSection(section)
-    }
-
-    override fun <T> getSectionForItem(item: T): ListaSection<*, *>? {
-        return sections[item!!::class.java]
+        return this
     }
 
 }

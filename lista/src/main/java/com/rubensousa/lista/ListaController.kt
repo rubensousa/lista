@@ -59,7 +59,7 @@ abstract class ListaController<T>(
     abstract fun createSectionRegistry(
         adapter: ListaAdapter<T>,
         recyclerView: RecyclerView
-    ): ListaSectionRegistry
+    ): ListaSectionRegistry<T>
 
     abstract fun createDiffItemCallback(): DiffUtil.ItemCallback<T>
 

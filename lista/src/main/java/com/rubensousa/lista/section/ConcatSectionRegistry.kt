@@ -29,55 +29,49 @@ import com.rubensousa.lista.ListaSection
  *
  * Use [setFallback] to register a default section as fallback
  */
-class ConcatSectionRegistry : ListaSectionRegistry() {
+class ConcatSectionRegistry : ListaSectionRegistry<Any>() {
 
-    private val registries = ArrayList<ListaSectionRegistry>()
-    private var fallback: ListaSectionRegistry? = null
+    private val registries = ArrayList<ListaSectionRegistry<Any>>()
+    private var fallback: ListaSectionRegistry<Any>? = null
 
-    fun addRegistry(registry: ListaSectionRegistry) {
-        registries.add(registry)
-    }
-
-    fun setFallback(section: ListaSection<*, *>) {
-        fallback = FallbackSectionRegistry(section)
-    }
-
-    override fun <T> getSectionForItem(item: T): ListaSection<*, *>? {
+    override fun getSectionForItem(item: Any?): ListaSection<out Any, *>? {
         for (registry in registries) {
             return registry.getSectionForItem(item) ?: continue
         }
         return fallback?.getSectionForItem(item)
     }
 
-    override fun getSectionForItemViewType(itemViewType: Int): ListaSection<*, *>? {
+    override fun getSectionForItemViewType(itemViewType: Int): ListaSection<out Any, *>? {
         for (registry in registries) {
             return registry.getSectionForItemViewType(itemViewType) ?: continue
         }
         return fallback?.getSectionForItemViewType(itemViewType)
     }
 
-    override fun getSections(): List<ListaSection<*, *>> {
-        val sections = ArrayList<ListaSection<*, *>>()
+    override fun getSections(): List<ListaSection<out Any, *>> {
+        val sections = ArrayList<ListaSection<out Any, *>>()
         registries.forEach { registry ->
             sections.addAll(registry.getSections())
         }
         return sections
     }
 
-    private class FallbackSectionRegistry(private val section: ListaSection<*, *>) :
-        ListaSectionRegistry() {
+    fun addRegistry(registry: ListaSectionRegistry<Any>) {
+        registries.add(registry)
+    }
 
-        override fun getSections(): List<ListaSection<*, *>> {
-            return listOf(section)
-        }
+    fun setFallback(section: ListaSection<out Any, *>) {
+        fallback = FallbackSectionRegistry(section)
+    }
 
-        override fun getSectionForItemViewType(itemViewType: Int): ListaSection<*, *> {
-            return section
-        }
+    private class FallbackSectionRegistry<T>(private val section: ListaSection<out T, *>) :
+        ListaSectionRegistry<T>() {
 
-        override fun <T> getSectionForItem(item: T): ListaSection<*, *> {
-            return section
-        }
+        override fun getSections(): List<ListaSection<out T, *>> = listOf(section)
+
+        override fun getSectionForItemViewType(itemViewType: Int): ListaSection<out T, *> = section
+
+        override fun getSectionForItem(item: T?): ListaSection<out T, *> = section
 
     }
 

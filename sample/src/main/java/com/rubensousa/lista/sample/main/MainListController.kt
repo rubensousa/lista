@@ -61,8 +61,8 @@ class MainListController(
     override fun createSectionRegistry(
         adapter: ListaAdapter<SectionModel>,
         recyclerView: RecyclerView
-    ): ListaSectionRegistry {
-        val registry = ClassSectionRegistry()
+    ): ListaSectionRegistry<SectionModel> {
+        val registry = ClassSectionRegistry<SectionModel>()
         val cardSection = CardSection(
             layout = R.layout.section_card_grid,
             showPosition = false

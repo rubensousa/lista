@@ -29,38 +29,38 @@ import com.rubensousa.lista.ListaSection
  *
  * Use [setFallback] to register a default section as fallback
  */
-class ConcatSectionRegistry : ListaSectionRegistry<Any>() {
+class ConcatSectionRegistry<T> : ListaSectionRegistry<T>() {
 
-    private val registries = ArrayList<ListaSectionRegistry<Any>>()
-    private var fallback: ListaSectionRegistry<Any>? = null
+    private val registries = ArrayList<ListaSectionRegistry<T>>()
+    private var fallback: ListaSectionRegistry<T>? = null
 
-    override fun getSectionForItem(item: Any?): ListaSection<out Any, *>? {
+    override fun getSectionForItem(item: T?): ListaSection<out T, *>? {
         for (registry in registries) {
             return registry.getSectionForItem(item) ?: continue
         }
         return fallback?.getSectionForItem(item)
     }
 
-    override fun getSectionForItemViewType(itemViewType: Int): ListaSection<out Any, *>? {
+    override fun getSectionForItemViewType(itemViewType: Int): ListaSection<out T, *>? {
         for (registry in registries) {
             return registry.getSectionForItemViewType(itemViewType) ?: continue
         }
         return fallback?.getSectionForItemViewType(itemViewType)
     }
 
-    override fun getSections(): List<ListaSection<out Any, *>> {
-        val sections = ArrayList<ListaSection<out Any, *>>()
+    override fun getSections(): List<ListaSection<out T, *>> {
+        val sections = ArrayList<ListaSection<out T, *>>()
         registries.forEach { registry ->
             sections.addAll(registry.getSections())
         }
         return sections
     }
 
-    fun addRegistry(registry: ListaSectionRegistry<Any>) {
+    fun addRegistry(registry: ListaSectionRegistry<T>) {
         registries.add(registry)
     }
 
-    fun setFallback(section: ListaSection<out Any, *>) {
+    fun setFallback(section: ListaSection<out T, *>) {
         fallback = FallbackSectionRegistry(section)
     }
 

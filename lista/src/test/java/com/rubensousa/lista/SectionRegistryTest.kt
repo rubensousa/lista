@@ -68,7 +68,7 @@ class SectionRegistryTest {
 
     @Test
     fun `placeholder section is found from ConcatSectionRegistry`() {
-        val registry = ConcatSectionRegistry()
+        val registry = ConcatSectionRegistry<Any>()
 
         val classRegistry = ClassSectionRegistry<Any>()
         val stringSection = StringSection()

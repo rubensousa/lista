@@ -22,7 +22,6 @@ import com.rubensousa.lista.ListaViewHolder
 import com.rubensousa.lista.extensions.bindingOf
 import com.rubensousa.lista.item.ListaItem
 import com.rubensousa.lista.item.ListaItemSection
-import com.rubensousa.lista.sample.databinding.SectionCardBinding
 import com.rubensousa.lista.sample.databinding.SectionCardGridBinding
 import com.rubensousa.lista.sample.model.CardModel
 import com.rubensousa.lista.section.ListaSectionArgs

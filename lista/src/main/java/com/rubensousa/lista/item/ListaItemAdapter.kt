@@ -18,7 +18,6 @@ package com.rubensousa.lista.item
 
 import androidx.recyclerview.widget.DiffUtil
 import com.rubensousa.lista.ListaAdapter
-import com.rubensousa.lista.section.ItemSectionRegistry
 import com.rubensousa.lista.section.ListaSectionArgs
 
 class ListaItemAdapter(

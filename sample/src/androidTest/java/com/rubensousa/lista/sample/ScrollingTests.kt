@@ -38,12 +38,11 @@ import org.junit.runner.RunWith
  * Simple tests that perform scrolling on RecyclerViews
  *
  */
-@RunWith(AndroidJUnit4::class)
 class ScrollingTests {
 
     companion object {
-        const val PARENT_RECYCLERVIEW = R.id.recyclerView
-        const val CHILD_RECYCLERVIEW = R.id.cardRecyclerView
+        val PARENT_RECYCLERVIEW = R.id.recyclerView
+        val CHILD_RECYCLERVIEW = R.id.cardRecyclerView
         const val NESTED_POSITION = 5
         const val NESTED_VIEW_POSITION = 19
     }
@@ -55,7 +54,7 @@ class ScrollingTests {
     @Test
     fun testSmoothScrollingMainList() {
         onView(withId(PARENT_RECYCLERVIEW))
-            .perform(com.rubensousa.lista.testing.actions.ListaActions.waitForItemViewLayout())
+            .perform(ListaActions.waitForItemViewLayout())
             .perform(smoothScrollTo(8))
             .perform(smoothScrollTo(0))
     }
@@ -64,11 +63,11 @@ class ScrollingTests {
     @Test
     fun testSmoothScrollingNestedList() {
         onView(withId(PARENT_RECYCLERVIEW)).perform(
-            scrollTo<RecyclerView.ViewHolder>(withTagValue(`is`(NESTED_POSITION)))
+            scrollTo<RecyclerView.ViewHolder>(withTagValue(`is`(NESTED_POSITION.toString())))
         )
         onView(
             withNestedRecyclerView(
-                childRecyclerViewMatcher = withTagValue(`is`(NESTED_POSITION)),
+                childRecyclerViewMatcher = withTagValue(`is`(NESTED_POSITION.toString())),
                 parentRecyclerViewId = PARENT_RECYCLERVIEW
             )
         ).perform(smoothScrollTo(NESTED_VIEW_POSITION))
@@ -78,12 +77,12 @@ class ScrollingTests {
     fun testScrollingNestedList() {
         // Scroll the parent RecyclerView to the nested section
         onView(withId(PARENT_RECYCLERVIEW))
-            .perform(scrollTo<RecyclerView.ViewHolder>(withTagValue(`is`(NESTED_POSITION))))
+            .perform(scrollTo<RecyclerView.ViewHolder>(withTagValue(`is`(NESTED_POSITION.toString()))))
 
         // Scroll the nested section to the item position we're interested in
         onView(
             withNestedRecyclerView(
-                childRecyclerViewMatcher = withTagValue(`is`(NESTED_POSITION)),
+                childRecyclerViewMatcher = withTagValue(`is`(NESTED_POSITION.toString())),
                 parentRecyclerViewId = PARENT_RECYCLERVIEW
             )
         ).perform(RecyclerViewActions.scrollToPosition<RecyclerView.ViewHolder>(NESTED_VIEW_POSITION))
@@ -92,7 +91,7 @@ class ScrollingTests {
         onView(
             withNestedView(
                 itemMatcher = withTagValue(`is`(NESTED_VIEW_POSITION)),
-                sectionMatcher = withTagValue(`is`(NESTED_POSITION))
+                sectionMatcher = withTagValue(`is`(NESTED_POSITION.toString()))
             )
         ).check(ViewAssertions.matches(isDisplayed()))
     }

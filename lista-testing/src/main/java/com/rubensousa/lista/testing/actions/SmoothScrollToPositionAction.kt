@@ -40,34 +40,13 @@ class SmoothScrollToPositionAction(private val position: Int) : ViewAction {
 
     override fun perform(uiController: UiController, view: View) {
         val recyclerView = view as RecyclerView
-        val idlingResource = ScrollingIdlingResource(recyclerView)
-        IdlingRegistry.getInstance().register(idlingResource)
         recyclerView.smoothScrollToPosition(position)
         uiController.loopMainThreadForAtLeast(300L)
-        IdlingRegistry.getInstance().unregister(idlingResource)
-    }
-
-    class ScrollingIdlingResource(
-        private val recyclerView: RecyclerView,
-        private var callback: IdlingResource.ResourceCallback? = null
-    ) : IdlingResource {
-
-        override fun getName(): String = this::class.simpleName ?: ""
-
-        override fun isIdleNow(): Boolean {
-            val layoutManager = recyclerView.layoutManager ?: return true
-            val isSmoothScrolling = layoutManager.isSmoothScrolling
-                    && recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE
-            if (!isSmoothScrolling) {
-                callback?.onTransitionToIdle()
-            }
-            return !isSmoothScrolling
+        val layoutManager = recyclerView.layoutManager ?: return
+        while (layoutManager.isSmoothScrolling) {
+            uiController.loopMainThreadUntilIdle()
         }
-
-        override fun registerIdleTransitionCallback(callback: IdlingResource.ResourceCallback?) {
-            this.callback = callback
-        }
-
+        uiController.loopMainThreadForAtLeast(300L)
     }
 
 }

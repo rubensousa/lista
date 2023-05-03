@@ -54,6 +54,7 @@ class ListaScrollStateManager {
 
     companion object {
         const val STATE_BUNDLE = "scroll_state_bundle"
+        const val ARG_KEY = "arg_scroll_state"
     }
 
     /**
@@ -88,13 +89,6 @@ class ListaScrollStateManager {
         })
     }
 
-    fun setScrollStateKey(recyclerView: RecyclerView, key: String?) {
-        recyclerView.setTag(R.id.scroll_state_tag_key, key)
-    }
-
-    fun getScrollStateKey(recyclerView: RecyclerView): String? {
-        return recyclerView.getTag(R.id.scroll_state_tag_key) as String?
-    }
 
     fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         savedInstanceState?.getBundle(STATE_BUNDLE)?.let { bundle ->
@@ -120,9 +114,7 @@ class ListaScrollStateManager {
     /**
      * Saves this RecyclerView layout state for a given key
      */
-    fun saveScrollState(
-        recyclerView: RecyclerView
-    ) {
+    fun saveScrollState(recyclerView: RecyclerView) {
         val key = getScrollStateKey(recyclerView) ?: return
         // Check if we scrolled the RecyclerView for this key
         if (scrolledKeys.contains(key)) {
@@ -130,15 +122,13 @@ class ListaScrollStateManager {
             scrollState[key] = layoutManager.onSaveInstanceState()
             scrolledKeys.remove(key)
         }
+        setScrollStateKey(recyclerView, null)
     }
 
     /**
      * Restores this RecyclerView layout state for a given key
      */
-    fun restoreScrollState(
-        recyclerView: RecyclerView
-    ) {
-        val key = getScrollStateKey(recyclerView) ?: return
+    fun restoreScrollState(recyclerView: RecyclerView, key: String) {
         val layoutManager = recyclerView.layoutManager ?: return
         val savedState = scrollState[key]
         if (savedState != null) {
@@ -150,6 +140,15 @@ class ListaScrollStateManager {
         }
         // Mark this key as not scrolled since we just restored the state
         scrolledKeys.remove(key)
+        setScrollStateKey(recyclerView, key)
+    }
+
+    private fun setScrollStateKey(recyclerView: RecyclerView, key: String?) {
+        recyclerView.setTag(R.id.scroll_state_tag_key, key)
+    }
+
+    private fun getScrollStateKey(recyclerView: RecyclerView): String? {
+        return recyclerView.getTag(R.id.scroll_state_tag_key) as String?
     }
 
 }

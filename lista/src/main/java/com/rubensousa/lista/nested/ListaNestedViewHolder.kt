@@ -48,36 +48,11 @@ abstract class ListaNestedViewHolder<T>(itemView: View) : ListaViewHolder<T>(ite
     abstract fun getAdapter(): RecyclerView.Adapter<*>
 
     /**
-     * @return an unique key per section to make sure scroll state works correctly
-     */
-    abstract fun getScrollStateKey(item: T): String
-
-    /**
      * Replace the adapter contents using notifyDataSetChanged() or related methods.
      * Do not worry about any actual diffing at this stage,
      * because the adapter will be completely replaced
      */
     abstract fun updateAdapter(item: T)
-
-    /**
-     * The RecycledViewPool to use for this ViewHolder, or null to use the default one.
-     * For maximum performance, consider using a shared [RecyclerView.RecycledViewPool]
-     */
-    open fun getRecycledViewPool(): RecyclerView.RecycledViewPool? {
-        return null
-    }
-
-    @CallSuper
-    override fun onCreated() {
-        super.onCreated()
-        val recyclerView = getRecyclerView()
-
-        // Set a shared view pool if any to recycle views across multiple RecyclerViews
-        val recycledViewPool = getRecycledViewPool()
-        if (recycledViewPool != null) {
-            recyclerView.setRecycledViewPool(recycledViewPool)
-        }
-    }
 
     @CallSuper
     override fun onBound(item: T, payloads: List<Any>) {
@@ -105,19 +80,10 @@ abstract class ListaNestedViewHolder<T>(itemView: View) : ListaViewHolder<T>(ite
         restoreSnapPosition()
     }
 
-
     /**
      * @return true if scroll state should be saved
      */
     open fun isScrollStateSaveEnabled() = true
-
-    /**
-     * @return true if the LayoutManager is set to recycle views
-     * when they're detached from the window.
-     * When this is true, the scroll state needs to be restored at [onAttachedToWindow]
-     * and saved in [onDetachedFromWindow]
-     */
-    open fun isRecyclingChildrenOnDetachedFromWindow() = true
 
     /**
      * @return the SnapHelper attached to the RecyclerView in [getRecyclerView] or null

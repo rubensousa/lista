@@ -21,38 +21,30 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 /**
- * Emits [ListaPage] objects when a RecyclerView attached is scrolled.
- *
  * Pass this class in [RecyclerView.addOnScrollListener] to start listening for page changes.
  *
- * @param pageListener a listener that receives the page change events
- *
- * @param linearLayoutManager the [LinearLayoutManager] attached to the RecyclerView
+ * @param onPageChanged a listener that receives the page change events
  */
 class ListaPager(
-    private val pageListener: OnPageChangedListener,
-    private var linearLayoutManager: LinearLayoutManager
+    private val onPageChanged: (firstVisiblePosition: Int, lastVisiblePosition: Int) -> Unit,
 ) : RecyclerView.OnScrollListener() {
 
-    interface OnPageChangedListener {
-        fun onPageChanged(firstVisiblePosition: Int, lastVisiblePosition: Int)
-    }
+    var isEnabled = true
 
     private var firstVisiblePosition = 0
     private var lastVisiblePosition = 0
-    var isEnabled = true
-
-    fun setLayoutManager(layoutManager: LinearLayoutManager) {
-        linearLayoutManager = layoutManager
-    }
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
         if (!isEnabled) {
             return
         }
-        val newFirstVisiblePosition = linearLayoutManager.findFirstVisibleItemPosition()
-        val newLastVisiblePosition = linearLayoutManager.findLastVisibleItemPosition()
+        val layoutManager = recyclerView.layoutManager
+        if (layoutManager !is LinearLayoutManager) {
+            return
+        }
+        val newFirstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
+        val newLastVisiblePosition = layoutManager.findLastVisibleItemPosition()
 
         // Check for invalid positions
         if (newFirstVisiblePosition == RecyclerView.NO_POSITION
@@ -61,8 +53,8 @@ class ListaPager(
             return
         }
         // Check for non-scroll events
-        if ((dx == 0 && linearLayoutManager.orientation == RecyclerView.HORIZONTAL)
-            || (dy == 0 && linearLayoutManager.orientation == RecyclerView.VERTICAL)
+        if ((dx == 0 && layoutManager.orientation == RecyclerView.HORIZONTAL)
+            || (dy == 0 && layoutManager.orientation == RecyclerView.VERTICAL)
         ) {
             return
         }
@@ -72,7 +64,7 @@ class ListaPager(
         ) {
             firstVisiblePosition = newFirstVisiblePosition
             lastVisiblePosition = newLastVisiblePosition
-            pageListener.onPageChanged(firstVisiblePosition, lastVisiblePosition)
+            onPageChanged(firstVisiblePosition, lastVisiblePosition)
         }
     }
 

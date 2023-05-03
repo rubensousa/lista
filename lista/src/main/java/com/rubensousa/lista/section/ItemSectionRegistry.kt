@@ -19,17 +19,16 @@ package com.rubensousa.lista.section
 import com.rubensousa.lista.ListaSection
 import com.rubensousa.lista.item.ListaItem
 
-class ItemSectionRegistry<T>(
+class ItemSectionRegistry(
     private val args: ListaSectionArgs
-) : ListaSectionRegistry<ListaItem<T>>() {
+) : ListaSectionRegistry<ListaItem<Any>>() {
 
-    private val classSections = LinkedHashMap<Class<*>, ListaSection<out ListaItem<T>, *>>()
+    private val classSections = LinkedHashMap<Class<*>, ListaSection<out ListaItem<Any>, *>>()
 
-    override fun getSectionForItem(item: ListaItem<T>?): ListaSection<out ListaItem<T>, *>? {
+    override fun getSectionForItem(item: ListaItem<Any>?): ListaSection<out ListaItem<Any>, *>? {
         val currentItem = item ?: return null
         val currentSection = classSections[currentItem::class.java]
         if (currentSection != null) return currentSection
-
         val newSection = currentItem.createListaSection(args)
         classSections[currentItem::class.java] = newSection
         registerSection(newSection)

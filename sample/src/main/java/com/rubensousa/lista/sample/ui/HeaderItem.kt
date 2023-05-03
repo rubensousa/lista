@@ -14,27 +14,36 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.sample.sections
+package com.rubensousa.lista.sample.ui
 
-import android.view.ViewGroup
 import com.rubensousa.lista.ListaSection
 import com.rubensousa.lista.ListaViewHolder
 import com.rubensousa.lista.extensions.bindingOf
+import com.rubensousa.lista.item.ListaItem
+import com.rubensousa.lista.item.ListaItemSection
 import com.rubensousa.lista.sample.databinding.SectionHeaderBinding
 import com.rubensousa.lista.sample.model.HeaderModel
+import com.rubensousa.lista.section.ListaSectionArgs
 
-class HeaderSection : ListaSection<HeaderModel, HeaderSection.ViewHolder>() {
+class HeaderItem(override val model: HeaderModel) : ListaItem<HeaderModel> {
 
-    override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
-        return ViewHolder(parent.bindingOf(SectionHeaderBinding::inflate))
+    override val diffId: String = model.getId()
+
+    override fun createListaSection(
+        args: ListaSectionArgs
+    ): ListaSection<ListaItem<HeaderModel>, *> {
+        return ListaItemSection { parent ->
+            ViewHolder(parent.bindingOf(SectionHeaderBinding::inflate))
+        }
     }
 
-    class ViewHolder(private val binding: SectionHeaderBinding) :
-        ListaViewHolder<HeaderModel>(binding.root) {
+    private class ViewHolder(
+        private val binding: SectionHeaderBinding
+    ) : ListaViewHolder<ListaItem<HeaderModel>>(binding.root) {
 
-        override fun onBound(item: HeaderModel, payloads: List<Any>) {
+        override fun onBound(item: ListaItem<HeaderModel>, payloads: List<Any>) {
             super.onBound(item, payloads)
-            binding.headerTitleTextView.setText(item.titleResource)
+            binding.headerTitleTextView.setText(item.model.titleResource)
         }
 
     }

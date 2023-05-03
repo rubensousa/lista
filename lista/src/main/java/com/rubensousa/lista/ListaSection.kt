@@ -73,12 +73,6 @@ abstract class ListaSection<T, V : ListaViewHolder<T>>(
         return LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
     }
 
-    protected fun <T: ViewBinding> ViewGroup.bindingOf(
-        factory: (LayoutInflater, ViewGroup, Boolean) -> T
-    ): T {
-        return factory(LayoutInflater.from(context), this, false)
-    }
-
     /**
      * Is set by the section registry when [VIEW_TYPE_AUTO_GENERATED] is defined as [itemViewType]
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Rúben Sousa
+ * Copyright 2022 Rúben Sousa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.sample.model
+package com.rubensousa.lista.item
 
-import com.rubensousa.lista.sample.ui.SmallCardItem
+import androidx.recyclerview.widget.GridLayoutManager
 
-data class CardListModel(val id: Int, val items: List<SmallCardItem>)
+class ListaItemSpanSizeLookup(
+    private val adapter: ListaItemAdapter,
+    private val gridLayoutManager: GridLayoutManager
+) : GridLayoutManager.SpanSizeLookup() {
+
+    override fun getSpanSize(position: Int): Int {
+        return adapter.getItemAt(position)?.getSpanSize() ?: gridLayoutManager.spanCount
+    }
+
+}

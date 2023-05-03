@@ -19,10 +19,21 @@ package com.rubensousa.lista.item
 import com.rubensousa.lista.ListaSection
 import com.rubensousa.lista.section.ListaSectionArgs
 
-interface ListaItem<T> {
+interface ListaItem<out T: Any> {
 
     val model: T
 
+    val diffId: String
+
     fun createListaSection(args: ListaSectionArgs): ListaSection<ListaItem<@UnsafeVariance T>, *>
+
+    /**
+     * @return null for full span count, or >= 1 for one specific span size
+     */
+    fun getSpanSize(): Int? = null
+
+    fun areItemsTheSame(other: ListaItem<Any>): Boolean = diffId == other.diffId
+
+    fun areContentsTheSame(other: ListaItem<Any>): Boolean = model == other.model
 
 }

@@ -17,6 +17,7 @@
 package com.rubensousa.lista.nested
 
 import androidx.annotation.CallSuper
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.rubensousa.lista.ListaSection
 
 /**
@@ -26,7 +27,8 @@ import com.rubensousa.lista.ListaSection
  */
 abstract class ListaNestedSection<T, VH : ListaNestedViewHolder<T>>(
     itemViewType: Int = VIEW_TYPE_AUTO_GENERATED,
-    protected val scrollStateManager: ListaScrollStateManager = ListaScrollStateManager()
+    protected val scrollStateManager: ListaScrollStateManager = ListaScrollStateManager(),
+    private val scrollStateKeyProvider: ScrollStateKeyProvider<T>
 ) : ListaSection<T, VH>(itemViewType) {
 
     /**
@@ -49,10 +51,7 @@ abstract class ListaNestedSection<T, VH : ListaNestedViewHolder<T>>(
     override fun onViewHolderBound(holder: VH, item: T, payloads: List<Any>) {
         super.onViewHolderBound(holder, item, payloads)
         val recyclerView = holder.getRecyclerView()
-        scrollStateManager.setScrollStateKey(recyclerView, holder.getScrollStateKey(item))
-        if (holder.isScrollStateSaveEnabled()) {
-            scrollStateManager.restoreScrollState(recyclerView)
-        }
+        scrollStateManager.restoreScrollState(recyclerView, scrollStateKeyProvider.getKey(item))
     }
 
     @CallSuper
@@ -61,23 +60,36 @@ abstract class ListaNestedSection<T, VH : ListaNestedViewHolder<T>>(
         if (holder.isScrollStateSaveEnabled()) {
             scrollStateManager.saveScrollState(holder.getRecyclerView())
         }
-        scrollStateManager.setScrollStateKey(holder.getRecyclerView(), null)
     }
 
     @CallSuper
     override fun onViewHolderAttachedToWindow(holder: VH) {
         super.onViewHolderAttachedToWindow(holder)
-        if (holder.isScrollStateSaveEnabled() && holder.isRecyclingChildrenOnDetachedFromWindow()) {
-            scrollStateManager.restoreScrollState(holder.getRecyclerView())
+        if (holder.isScrollStateSaveEnabled() && isRecyclingChildrenOnDetachedFromWindow(holder)) {
+            val item = holder.getItem() ?: return
+            scrollStateManager.restoreScrollState(
+                holder.getRecyclerView(),
+                scrollStateKeyProvider.getKey(item)
+            )
         }
     }
 
     @CallSuper
     override fun onViewHolderDetachedFromWindow(holder: VH) {
         super.onViewHolderDetachedFromWindow(holder)
-        if (holder.isScrollStateSaveEnabled() && holder.isRecyclingChildrenOnDetachedFromWindow()) {
+        if (holder.isScrollStateSaveEnabled() && isRecyclingChildrenOnDetachedFromWindow(holder)) {
             scrollStateManager.saveScrollState(holder.getRecyclerView())
         }
     }
 
+    /**
+     * @return true if the LayoutManager is set to recycle views
+     * when they're detached from the window.
+     * When this is true, the scroll state needs to be restored at [onViewHolderAttachedToWindow]
+     * and saved in [onViewHolderDetachedFromWindow]
+     */
+    private fun isRecyclingChildrenOnDetachedFromWindow(holder: VH): Boolean {
+        val layoutManager = holder.getRecyclerView().layoutManager
+        return layoutManager is LinearLayoutManager && layoutManager.recycleChildrenOnDetach
+    }
 }

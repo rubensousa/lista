@@ -16,8 +16,5 @@
 
 package com.rubensousa.lista.sample.model
 
-data class CardModel(val id: Int) : SectionModel {
+data class CardModel(val id: Int)
 
-    override fun getId(): String = id.toString()
-
-}

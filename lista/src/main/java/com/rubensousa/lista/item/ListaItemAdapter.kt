@@ -21,15 +21,14 @@ import com.rubensousa.lista.ListaAdapter
 import com.rubensousa.lista.section.ItemSectionRegistry
 import com.rubensousa.lista.section.ListaSectionArgs
 
-class ListaItemAdapter<T : Any>(
+class ListaItemAdapter(
     args: ListaSectionArgs = ListaSectionArgs.EMPTY,
-    diffCallback: DiffUtil.ItemCallback<T>
-) : ListaAdapter<ListaItem<T>>(object : DiffUtil.ItemCallback<ListaItem<T>>() {
-    override fun areItemsTheSame(oldItem: ListaItem<T>, newItem: ListaItem<T>): Boolean {
-        return diffCallback.areItemsTheSame(oldItem.model, newItem.model)
+) : ListaAdapter<ListaItem<Any>>(object : DiffUtil.ItemCallback<ListaItem<Any>>() {
+    override fun areItemsTheSame(oldItem: ListaItem<Any>, newItem: ListaItem<Any>): Boolean {
+        return oldItem.areItemsTheSame(newItem)
     }
-    override fun areContentsTheSame(oldItem: ListaItem<T>, newItem: ListaItem<T>): Boolean {
-        return diffCallback.areContentsTheSame(oldItem.model, newItem.model)
+    override fun areContentsTheSame(oldItem: ListaItem<Any>, newItem: ListaItem<Any>): Boolean {
+        return oldItem.areContentsTheSame(newItem)
     }
 }) {
 

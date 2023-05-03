@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Rúben Sousa
+ * Copyright 2022 Rúben Sousa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.sample.model
+package com.rubensousa.lista.extensions
 
-import com.rubensousa.lista.sample.ui.SmallCardItem
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.viewbinding.ViewBinding
 
-data class CardListModel(val id: Int, val items: List<SmallCardItem>)
+fun <T: ViewBinding> ViewGroup.bindingOf(
+    factory: (LayoutInflater, ViewGroup, Boolean) -> T
+): T {
+    return factory(LayoutInflater.from(context), this, false)
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Rúben Sousa
+ * Copyright 2022 Rúben Sousa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.sample.model
+package com.rubensousa.lista.nested
 
-import com.rubensousa.lista.sample.ui.SmallCardItem
+import com.rubensousa.lista.item.ListaItem
 
-data class CardListModel(val id: Int, val items: List<SmallCardItem>)
+interface ScrollStateKeyProvider<T> {
+
+    companion object {
+        val DEFAULT = object: ScrollStateKeyProvider<ListaItem<Any>> {
+            override fun getKey(item: ListaItem<Any>): String = item.diffId
+        }
+    }
+
+    fun getKey(item: T): String
+
+}

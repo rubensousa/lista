@@ -16,13 +16,14 @@
 
 package com.rubensousa.lista.section
 
-class MutableSectionArgs : ListaSectionArgs {
-    private val args = LinkedHashMap<String, Any?>()
+class ListaMutableSectionArgs : ListaSectionArgs {
+
+    private val args = LinkedHashMap<String, Any>()
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T> get(key: String): T? = args[key] as T?
+    override fun <T> get(key: String): T = args[key] as T
 
-    fun <T> set(key: String, value: T) {
+    fun <T : Any> set(key: String, value: T) {
         args[key] = value
     }
 

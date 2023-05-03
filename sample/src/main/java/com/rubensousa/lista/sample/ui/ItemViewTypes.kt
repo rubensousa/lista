@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Rúben Sousa
+ * Copyright 2022 Rúben Sousa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.sample.model
+package com.rubensousa.lista.sample.ui
 
-import com.rubensousa.lista.sample.ui.SmallCardItem
-
-data class CardListModel(val id: Int, val items: List<SmallCardItem>)
+/**
+ * Manual set item view types for items that are shared across view pools
+ */
+object ItemViewTypes {
+    val CARD_LIST_ITEM = 0
+}

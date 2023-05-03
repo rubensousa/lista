@@ -34,6 +34,14 @@ class ListaPager(
     private var firstVisiblePosition = 0
     private var lastVisiblePosition = 0
 
+    fun attach(recyclerView: RecyclerView) {
+        recyclerView.addOnScrollListener(this)
+    }
+
+    fun detach(recyclerView: RecyclerView) {
+        recyclerView.removeOnScrollListener(this)
+    }
+
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
         if (!isEnabled) {

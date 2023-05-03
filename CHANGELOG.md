@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.0-alpha01
+
+- Added `ListaItem` for lists that can render any type of content without having to register a `ListaSectionRegistry`
+- Added `attach` and `detach` to ListaPager
+
 ## 3.0.0
 
 ### New

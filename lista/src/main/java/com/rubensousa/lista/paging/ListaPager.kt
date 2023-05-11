@@ -35,6 +35,7 @@ class ListaPager(
     private var lastVisiblePosition = 0
 
     fun attach(recyclerView: RecyclerView) {
+        detach(recyclerView)
         recyclerView.addOnScrollListener(this)
     }
 

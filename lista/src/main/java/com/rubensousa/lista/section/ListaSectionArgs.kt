@@ -20,12 +20,16 @@ interface ListaSectionArgs {
 
     companion object {
         val EMPTY = object: ListaSectionArgs {
-            override fun <T> get(key: String): T {
+            override fun <T> getOrDefault(key: String, default: T): T {
+                throw IllegalStateException("ListaSectionArgs is empty")
+            }
+            override fun <T> require(key: String): T {
                 throw IllegalStateException("ListaSectionArgs is empty")
             }
         }
     }
 
-    fun <T> get(key: String): T
+    fun <T> require(key: String): T
 
+    fun <T> getOrDefault(key: String, default: T): T
 }

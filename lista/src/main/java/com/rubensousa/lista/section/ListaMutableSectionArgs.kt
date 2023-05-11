@@ -21,7 +21,12 @@ class ListaMutableSectionArgs : ListaSectionArgs {
     private val args = LinkedHashMap<String, Any>()
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T> get(key: String): T = args[key] as T
+    override fun <T> require(key: String): T = args[key] as T
+
+    override fun <T> getOrDefault(key: String, default: T): T {
+        @Suppress("UNCHECKED_CAST")
+        return args[key] as? T ?: default
+    }
 
     fun <T : Any> set(key: String, value: T) {
         args[key] = value

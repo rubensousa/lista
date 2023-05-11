@@ -40,7 +40,7 @@ class CardListItem(override val model: CardListModel) : ListaItem<CardListModel>
     override fun createListaSection(
         args: ListaSectionArgs
     ): ListaSection<ListaItem<CardListModel>, *> {
-        val scrollStateManager = args.get<ListaScrollStateManager>(ListaScrollStateManager.ARG_KEY)
+        val scrollStateManager = args.require<ListaScrollStateManager>(ListaScrollStateManager.ARG_KEY)
         return ListaItemSection { parent ->
             ViewHolder(parent.bindingOf(SectionCardListBinding::inflate), scrollStateManager)
         }

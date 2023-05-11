@@ -93,6 +93,7 @@ class ListaScrollStateManager {
     fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         savedInstanceState?.getBundle(STATE_BUNDLE)?.let { bundle ->
             bundle.keySet().forEach { key ->
+                @Suppress("DEPRECATION")
                 scrollState[key] = bundle.getParcelable(key)
             }
         }

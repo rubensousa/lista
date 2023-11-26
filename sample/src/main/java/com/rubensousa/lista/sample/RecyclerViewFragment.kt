@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Rúben Sousa
+ * Copyright 2023 Rúben Sousa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.sample.main
+package com.rubensousa.lista.sample
 
 import android.os.Bundle
 import android.view.View
@@ -30,19 +30,22 @@ import com.rubensousa.decorator.LinearMarginDecoration
 import com.rubensousa.lista.item.ListaItemAdapter
 import com.rubensousa.lista.item.ListaItemSpanSizeLookup
 import com.rubensousa.lista.nested.ListaScrollStateManager
-import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.databinding.ScreenOptionsBinding
-import com.rubensousa.lista.sample.ui.BigCardItem
-import com.rubensousa.lista.sample.ui.SmallCardItem
-import com.rubensousa.lista.sample.ui.CardListItem
-import com.rubensousa.lista.sample.ui.OptionItem
+import com.rubensousa.lista.sample.recyclerview.BigCardRecyclerViewItem
+import com.rubensousa.lista.sample.recyclerview.SmallCardRecyclerViewItem
+import com.rubensousa.lista.sample.recyclerview.CardListRecyclerViewItem
+import com.rubensousa.lista.sample.recyclerview.OptionRecyclerViewItem
 import com.rubensousa.lista.section.ListaMutableArgs
 
-class MainFragment : Fragment(R.layout.screen_options) {
+class RecyclerViewFragment : Fragment(R.layout.screen_options) {
+
+    companion object {
+        const val TAG = "RecyclerViewFagment"
+    }
 
     private var _binding: ScreenOptionsBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: RecyclerViewViewModel by viewModels()
     private lateinit var scrollStateManager: ListaScrollStateManager
     private lateinit var adapter: ListaItemAdapter
 
@@ -93,9 +96,11 @@ class MainFragment : Fragment(R.layout.screen_options) {
                 horizontalMargin = defaultDecorationSize,
                 gridLayoutManager = layoutManager,
                 decorationLookup = object : DecorationLookup {
-                    override fun shouldApplyDecoration(position: Int, itemCount: Int): Boolean {
-                        val item = adapter.getItemAt(position)
-                        return item is BigCardItem
+                    override fun shouldApplyDecoration(
+                        viewHolder: RecyclerView.ViewHolder,
+                        itemCount: Int
+                    ): Boolean {
+                        return viewHolder is BigCardRecyclerViewItem.ViewHolder
                     }
                 }
             ),
@@ -103,8 +108,11 @@ class MainFragment : Fragment(R.layout.screen_options) {
                 topMargin = defaultDecorationSize,
                 bottomMargin = defaultDecorationSize,
                 decorationLookup = object : DecorationLookup {
-                    override fun shouldApplyDecoration(position: Int, itemCount: Int): Boolean {
-                        return adapter.getItemAt(position) !is SmallCardItem
+                    override fun shouldApplyDecoration(
+                        viewHolder: RecyclerView.ViewHolder,
+                        itemCount: Int
+                    ): Boolean {
+                        return viewHolder !is SmallCardRecyclerViewItem.ViewHolder
                     }
                 }
             ),
@@ -112,8 +120,11 @@ class MainFragment : Fragment(R.layout.screen_options) {
                 topMargin = defaultDecorationSize,
                 bottomMargin = defaultDecorationSize,
                 decorationLookup = object : DecorationLookup {
-                    override fun shouldApplyDecoration(position: Int, itemCount: Int): Boolean {
-                        return adapter.getItemAt(position) is OptionItem
+                    override fun shouldApplyDecoration(
+                        viewHolder: RecyclerView.ViewHolder,
+                        itemCount: Int
+                    ): Boolean {
+                        return viewHolder is OptionRecyclerViewItem.ViewHolder
                     }
                 }
             ),
@@ -121,8 +132,11 @@ class MainFragment : Fragment(R.layout.screen_options) {
                 topMargin = boundsDecorationSize,
                 bottomMargin = boundsDecorationSize,
                 decorationLookup = object : DecorationLookup {
-                    override fun shouldApplyDecoration(position: Int, itemCount: Int): Boolean {
-                        return adapter.getItemAt(position) is CardListItem
+                    override fun shouldApplyDecoration(
+                        viewHolder: RecyclerView.ViewHolder,
+                        itemCount: Int
+                    ): Boolean {
+                        return viewHolder is CardListRecyclerViewItem.ViewHolder
                     }
                 }
             ),

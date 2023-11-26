@@ -22,9 +22,7 @@ import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.contrib.RecyclerViewActions.scrollTo
 import androidx.test.espresso.matcher.ViewMatchers.*
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
-import com.rubensousa.lista.sample.main.MainActivity
 import com.rubensousa.lista.testing.actions.ListaActions
 import com.rubensousa.lista.testing.actions.ListaActions.smoothScrollTo
 import com.rubensousa.lista.testing.matchers.ListaNestedMatchers.withNestedRecyclerView
@@ -32,7 +30,6 @@ import com.rubensousa.lista.testing.matchers.ListaNestedMatchers.withNestedView
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
 /**
  * Simple tests that perform scrolling on RecyclerViews

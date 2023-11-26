@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Rúben Sousa
+ * Copyright 2023 Rúben Sousa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.sample.ui
+package com.rubensousa.lista.sample.recyclerview
 
 import androidx.core.view.isVisible
 import com.rubensousa.lista.ListaSection
@@ -26,7 +26,7 @@ import com.rubensousa.lista.sample.databinding.SectionCardGridBinding
 import com.rubensousa.lista.sample.model.CardModel
 import com.rubensousa.lista.section.ListaArgs
 
-class BigCardItem(override val model: CardModel) : ListaItem<CardModel> {
+class BigCardRecyclerViewItem(override val model: CardModel) : ListaItem<CardModel> {
 
     override val diffId: String = "Card${model.id}"
 

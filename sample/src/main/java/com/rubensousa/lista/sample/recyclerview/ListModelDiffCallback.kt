@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Rúben Sousa
+ * Copyright 2023 Rúben Sousa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,19 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.sample.model
+package com.rubensousa.lista.sample.recyclerview
 
-import com.rubensousa.lista.sample.ui.SmallCardItem
+import androidx.recyclerview.widget.DiffUtil
+import com.rubensousa.lista.sample.model.SectionModel
 
-data class CardListModel(val id: Int, val items: List<SmallCardItem>)
+class ListModelDiffCallback : DiffUtil.ItemCallback<SectionModel>() {
+
+    override fun areItemsTheSame(oldItem: SectionModel, newItem: SectionModel): Boolean {
+        return oldItem.getId() == newItem.getId()
+    }
+
+    override fun areContentsTheSame(oldItem: SectionModel, newItem: SectionModel): Boolean {
+        return oldItem.equals(newItem)
+    }
+
+}

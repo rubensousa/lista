@@ -20,12 +20,14 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".main.MainFragment">
+    tools:context=".RecyclerViewFragment">
 
     <com.rubensousa.lista.ListaRecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipChildren="false" />
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingBottom="32dp" />
 
 </LinearLayout>

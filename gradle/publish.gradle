@@ -134,7 +134,7 @@ afterEvaluate { project ->
 }
 
 def configurePom(pom) {
-    pom.name = POM_NAME
+    pom.name = LIBRARY_ARTIFACT
     pom.packaging = POM_PACKAGING
     pom.description = POM_DESCRIPTION
     pom.url = POM_URL

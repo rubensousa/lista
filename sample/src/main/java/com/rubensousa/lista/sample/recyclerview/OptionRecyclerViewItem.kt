@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Rúben Sousa
+ * Copyright 2023 Rúben Sousa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.sample.ui
+package com.rubensousa.lista.sample.recyclerview
 
 import androidx.core.view.isVisible
 import com.rubensousa.lista.ListaSection
@@ -26,7 +26,7 @@ import com.rubensousa.lista.sample.databinding.SectionOptionBinding
 import com.rubensousa.lista.sample.model.OptionModel
 import com.rubensousa.lista.section.ListaArgs
 
-class OptionItem(
+class OptionRecyclerViewItem(
     override val model: OptionModel,
     private val onClick: () -> Unit
 ) : ListaItem<OptionModel> {
@@ -47,7 +47,7 @@ class OptionItem(
             })
     }
 
-    private class ViewHolder(
+    class ViewHolder(
         private val binding: SectionOptionBinding
     ) : ListaViewHolder<ListaItem<OptionModel>>(binding.root) {
 

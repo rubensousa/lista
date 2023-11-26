@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.sample.ui
+package com.rubensousa.lista.sample.recyclerview
 
 /**
  * Manual set item view types for items that are shared across view pools

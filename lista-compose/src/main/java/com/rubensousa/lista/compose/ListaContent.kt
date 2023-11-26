@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Rúben Sousa
+ * Copyright 2023 Rúben Sousa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.sample.sections
+package com.rubensousa.lista.compose
 
-import androidx.recyclerview.widget.DiffUtil
-import com.rubensousa.lista.sample.model.SectionModel
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.ui.Modifier
 
-class ListModelDiffCallback : DiffUtil.ItemCallback<SectionModel>() {
+@Immutable
+interface ListaContent {
 
-    override fun areItemsTheSame(oldItem: SectionModel, newItem: SectionModel): Boolean {
-        return oldItem.getId() == newItem.getId()
-    }
-
-    override fun areContentsTheSame(oldItem: SectionModel, newItem: SectionModel): Boolean {
-        return oldItem.equals(newItem)
-    }
+    @Composable
+    fun Content(modifier: Modifier)
 
 }

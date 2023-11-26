@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (c) 2022. Rúben Sousa
+  ~ Copyright 2023 Rúben Sousa
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,17 +14,16 @@
   ~ limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:id="@+id/headerTitleTextView"
-        android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold" />
+    <item
+        android:id="@+id/navigation_recyclerview"
+        android:icon="@drawable/ic_list"
+        android:title="RecyclerView" />
 
-</LinearLayout>
+    <item
+        android:id="@+id/navigation_compose"
+        android:icon="@drawable/ic_list"
+        android:title="Compose" />
+
+</menu>

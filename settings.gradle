@@ -1,2 +1,3 @@
 include ':sample', ':lista'
 include ':lista-testing'
+include ':lista-compose'

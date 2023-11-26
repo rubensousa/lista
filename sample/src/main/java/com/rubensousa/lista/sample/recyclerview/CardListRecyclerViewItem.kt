@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Rúben Sousa
+ * Copyright 2023 Rúben Sousa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.sample.ui
+package com.rubensousa.lista.sample.recyclerview
 
 
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,26 +30,25 @@ import com.rubensousa.lista.nested.ListaScrollStateManager
 import com.rubensousa.lista.pool.getActivityScopedRecycledViewPool
 import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.databinding.SectionCardListBinding
-import com.rubensousa.lista.sample.model.CardListModel
 import com.rubensousa.lista.section.ListaArgs
 
-class CardListItem(override val model: CardListModel) : ListaItem<CardListModel> {
+class CardListRecyclerViewItem(override val model: CardListRecyclerViewModel) : ListaItem<CardListRecyclerViewModel> {
 
     override val diffId: String = model.id.toString()
 
     override fun createListaSection(
         args: ListaArgs
-    ): ListaSection<ListaItem<CardListModel>, *> {
+    ): ListaSection<ListaItem<CardListRecyclerViewModel>, *> {
         val scrollStateManager = args.require<ListaScrollStateManager>(ListaScrollStateManager.ARG_KEY)
         return ListaItemSection { parent ->
             ViewHolder(parent.bindingOf(SectionCardListBinding::inflate), scrollStateManager)
         }
     }
 
-    private class ViewHolder(
+    class ViewHolder(
         private val binding: SectionCardListBinding,
         private val scrollStateManager: ListaScrollStateManager
-    ) : ListaNestedViewHolder<ListaItem<CardListModel>>(binding.root) {
+    ) : ListaNestedViewHolder<ListaItem<CardListRecyclerViewModel>>(binding.root) {
 
         private val adapter = ListaItemAdapter()
 
@@ -59,6 +58,7 @@ class CardListItem(override val model: CardListModel) : ListaItem<CardListModel>
 
         override fun onCreated() {
             super.onCreated()
+            scrollStateManager.setupRecyclerView(binding.cardRecyclerView)
             val layoutManager = LinearLayoutManager(
                 itemView.context, RecyclerView.HORIZONTAL, false
             )
@@ -78,7 +78,7 @@ class CardListItem(override val model: CardListModel) : ListaItem<CardListModel>
             )
         }
 
-        override fun onBound(item: ListaItem<CardListModel>, payloads: List<Any>) {
+        override fun onBound(item: ListaItem<CardListRecyclerViewModel>, payloads: List<Any>) {
             super.onBound(item, payloads)
             scrollStateManager.restoreScrollState(binding.cardRecyclerView, item.diffId)
             itemView.tag = item.diffId
@@ -89,7 +89,7 @@ class CardListItem(override val model: CardListModel) : ListaItem<CardListModel>
             super.onRecycled()
         }
 
-        override fun updateAdapter(item: ListaItem<CardListModel>) {
+        override fun updateAdapter(item: ListaItem<CardListRecyclerViewModel>) {
             adapter.submitNow(item.model.items)
         }
 

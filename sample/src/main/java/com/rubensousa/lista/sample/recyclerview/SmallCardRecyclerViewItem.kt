@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Rúben Sousa
+ * Copyright 2023 Rúben Sousa
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,34 +14,35 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.sample.sections
+package com.rubensousa.lista.sample.recyclerview
 
-import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.rubensousa.lista.ListaSection
 import com.rubensousa.lista.ListaViewHolder
-import com.rubensousa.lista.sample.R
+import com.rubensousa.lista.extensions.bindingOf
+import com.rubensousa.lista.item.ListaItem
+import com.rubensousa.lista.item.ListaItemSection
 import com.rubensousa.lista.sample.databinding.SectionCardBinding
 import com.rubensousa.lista.sample.model.CardModel
+import com.rubensousa.lista.section.ListaArgs
 
-class CardSection(
-    private val layout: Int = R.layout.section_card,
-    private val showPosition: Boolean = true
-) : ListaSection<CardModel, CardSection.ViewHolder>(itemViewType = layout) {
+class SmallCardRecyclerViewItem(override val model: CardModel) : ListaItem<CardModel> {
 
-    override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
-        val view = inflate(parent, layout)
-        return ViewHolder(SectionCardBinding.bind(view), showPosition)
+    override val diffId: String = "Card${model.id}"
+
+    override fun createListaSection(args: ListaArgs): ListaSection<ListaItem<CardModel>, *> {
+        return ListaItemSection(itemViewType = ItemViewTypes.CARD_LIST_ITEM) { parent ->
+            ViewHolder(parent.bindingOf(SectionCardBinding::inflate), showPosition = true)
+        }
     }
 
     class ViewHolder(
         private val binding: SectionCardBinding,
         private val showPosition: Boolean
-    ) : ListaViewHolder<CardModel>(binding.root) {
+    ) : ListaViewHolder<ListaItem<CardModel>>(binding.root) {
 
-        override fun onBound(item: CardModel, payloads: List<Any>) {
-            super.onBound(item, payloads)
-            itemView.tag = item.id
+        override fun onBound(item: ListaItem<CardModel>, payloads: List<Any>) {
+            itemView.tag = item.model.id
             binding.cardTextView.isVisible = showPosition
             binding.cardTextView.text = bindingAdapterPosition.toString()
         }

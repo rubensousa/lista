@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kover'
+apply plugin: 'org.jetbrains.kotlinx.kover'
 
 android {
     compileSdkVersion versions.compileSdk
@@ -47,7 +47,13 @@ dependencies {
 
 apply from: "$rootProject.projectDir/gradle/publish.gradle"
 
-tasks.koverHtmlReport {
-    enabled = true
-    htmlReportDir.set(file("../test_coverage/lista"))
+kover {
+    koverReport {
+        filters {
+            excludes {
+                annotatedBy("*Generated*")
+                classes(".*_Factory.*")
+            }
+        }
+    }
 }

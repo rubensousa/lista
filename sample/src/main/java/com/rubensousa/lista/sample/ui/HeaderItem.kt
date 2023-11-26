@@ -23,14 +23,14 @@ import com.rubensousa.lista.item.ListaItem
 import com.rubensousa.lista.item.ListaItemSection
 import com.rubensousa.lista.sample.databinding.SectionHeaderBinding
 import com.rubensousa.lista.sample.model.HeaderModel
-import com.rubensousa.lista.section.ListaSectionArgs
+import com.rubensousa.lista.section.ListaArgs
 
 class HeaderItem(override val model: HeaderModel) : ListaItem<HeaderModel> {
 
     override val diffId: String = model.getId()
 
     override fun createListaSection(
-        args: ListaSectionArgs
+        args: ListaArgs
     ): ListaSection<ListaItem<HeaderModel>, *> {
         return ListaItemSection { parent ->
             ViewHolder(parent.bindingOf(SectionHeaderBinding::inflate))

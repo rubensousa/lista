@@ -24,13 +24,13 @@ import com.rubensousa.lista.item.ListaItem
 import com.rubensousa.lista.item.ListaItemSection
 import com.rubensousa.lista.sample.databinding.SectionCardGridBinding
 import com.rubensousa.lista.sample.model.CardModel
-import com.rubensousa.lista.section.ListaSectionArgs
+import com.rubensousa.lista.section.ListaArgs
 
 class BigCardItem(override val model: CardModel) : ListaItem<CardModel> {
 
     override val diffId: String = "Card${model.id}"
 
-    override fun createListaSection(args: ListaSectionArgs): ListaSection<ListaItem<CardModel>, *> {
+    override fun createListaSection(args: ListaArgs): ListaSection<ListaItem<CardModel>, *> {
         return ListaItemSection(itemViewType = ItemViewTypes.CARD_LIST_ITEM) { parent ->
             ViewHolder(parent.bindingOf(SectionCardGridBinding::inflate))
         }

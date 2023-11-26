@@ -17,11 +17,11 @@
 package com.rubensousa.lista.item
 
 import com.rubensousa.lista.ListaSection
-import com.rubensousa.lista.section.ListaSectionArgs
+import com.rubensousa.lista.section.ListaArgs
 import com.rubensousa.lista.section.ListaSectionRegistry
 
 internal class ItemSectionRegistry(
-    private val args: ListaSectionArgs
+    private val args: ListaArgs
 ) : ListaSectionRegistry<ListaItem<Any>>() {
 
     private val classSections = LinkedHashMap<Class<*>, ListaSection<out ListaItem<Any>, *>>()

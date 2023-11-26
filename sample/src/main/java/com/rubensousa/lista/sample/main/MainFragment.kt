@@ -36,7 +36,7 @@ import com.rubensousa.lista.sample.ui.BigCardItem
 import com.rubensousa.lista.sample.ui.SmallCardItem
 import com.rubensousa.lista.sample.ui.CardListItem
 import com.rubensousa.lista.sample.ui.OptionItem
-import com.rubensousa.lista.section.ListaMutableSectionArgs
+import com.rubensousa.lista.section.ListaMutableArgs
 
 class MainFragment : Fragment(R.layout.screen_options) {
 
@@ -51,7 +51,7 @@ class MainFragment : Fragment(R.layout.screen_options) {
         _binding = ScreenOptionsBinding.bind(view)
         scrollStateManager = ListaScrollStateManager()
         scrollStateManager.onRestoreInstanceState(savedInstanceState)
-        val args = ListaMutableSectionArgs()
+        val args = ListaMutableArgs()
         args.set(ListaScrollStateManager.ARG_KEY, scrollStateManager)
         adapter = ListaItemAdapter(args)
         setupRecyclerView(binding.recyclerView)

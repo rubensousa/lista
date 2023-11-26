@@ -17,7 +17,7 @@
 package com.rubensousa.lista.item
 
 import com.rubensousa.lista.ListaSection
-import com.rubensousa.lista.section.ListaSectionArgs
+import com.rubensousa.lista.section.ListaArgs
 
 interface ListaItem<out T: Any> {
 
@@ -25,7 +25,7 @@ interface ListaItem<out T: Any> {
 
     val diffId: String
 
-    fun createListaSection(args: ListaSectionArgs): ListaSection<ListaItem<@UnsafeVariance T>, *>
+    fun createListaSection(args: ListaArgs): ListaSection<ListaItem<@UnsafeVariance T>, *>
 
     /**
      * @return null for full span count, or >= 1 for one specific span size

@@ -16,20 +16,20 @@
 
 package com.rubensousa.lista.section
 
-interface ListaSectionArgs {
+class ListaMutableArgs : ListaArgs {
 
-    companion object {
-        val EMPTY = object: ListaSectionArgs {
-            override fun <T> getOrDefault(key: String, default: T): T {
-                throw IllegalStateException("ListaSectionArgs is empty")
-            }
-            override fun <T> require(key: String): T {
-                throw IllegalStateException("ListaSectionArgs is empty")
-            }
-        }
+    private val args = LinkedHashMap<String, Any>()
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> require(key: String): T = args[key] as T
+
+    override fun <T> getOrDefault(key: String, default: T): T {
+        @Suppress("UNCHECKED_CAST")
+        return args[key] as? T ?: default
     }
 
-    fun <T> require(key: String): T
+    fun <T : Any> set(key: String, value: T) {
+        args[key] = value
+    }
 
-    fun <T> getOrDefault(key: String, default: T): T
 }

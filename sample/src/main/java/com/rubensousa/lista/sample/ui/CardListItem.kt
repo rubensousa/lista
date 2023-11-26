@@ -31,14 +31,14 @@ import com.rubensousa.lista.pool.getActivityScopedRecycledViewPool
 import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.databinding.SectionCardListBinding
 import com.rubensousa.lista.sample.model.CardListModel
-import com.rubensousa.lista.section.ListaSectionArgs
+import com.rubensousa.lista.section.ListaArgs
 
 class CardListItem(override val model: CardListModel) : ListaItem<CardListModel> {
 
     override val diffId: String = model.id.toString()
 
     override fun createListaSection(
-        args: ListaSectionArgs
+        args: ListaArgs
     ): ListaSection<ListaItem<CardListModel>, *> {
         val scrollStateManager = args.require<ListaScrollStateManager>(ListaScrollStateManager.ARG_KEY)
         return ListaItemSection { parent ->

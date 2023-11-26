@@ -24,7 +24,7 @@ import com.rubensousa.lista.item.ListaItem
 import com.rubensousa.lista.item.ListaItemSection
 import com.rubensousa.lista.sample.databinding.SectionOptionBinding
 import com.rubensousa.lista.sample.model.OptionModel
-import com.rubensousa.lista.section.ListaSectionArgs
+import com.rubensousa.lista.section.ListaArgs
 
 class OptionItem(
     override val model: OptionModel,
@@ -34,7 +34,7 @@ class OptionItem(
     override val diffId: String = "Option${model.id}"
 
     override fun createListaSection(
-        args: ListaSectionArgs
+        args: ListaArgs
     ): ListaSection<ListaItem<OptionModel>, *> {
         return ListaItemSection(
             onCreated = { holder ->

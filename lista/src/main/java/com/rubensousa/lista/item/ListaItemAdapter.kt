@@ -18,10 +18,10 @@ package com.rubensousa.lista.item
 
 import androidx.recyclerview.widget.DiffUtil
 import com.rubensousa.lista.ListaAdapter
-import com.rubensousa.lista.section.ListaSectionArgs
+import com.rubensousa.lista.section.ListaArgs
 
 class ListaItemAdapter(
-    args: ListaSectionArgs = ListaSectionArgs.EMPTY,
+    args: ListaArgs = ListaArgs.EMPTY,
 ) : ListaAdapter<ListaItem<Any>>(object : DiffUtil.ItemCallback<ListaItem<Any>>() {
     override fun areItemsTheSame(oldItem: ListaItem<Any>, newItem: ListaItem<Any>): Boolean {
         return oldItem.areItemsTheSame(newItem)

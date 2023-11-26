@@ -20,22 +20,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rubensousa.lista.compose.ListaLazyGridItem
 import com.rubensousa.lista.sample.compose.BigCardComposeItem
+import com.rubensousa.lista.sample.compose.CardListComposeItem
+import com.rubensousa.lista.sample.compose.CardListComposeModel
 import com.rubensousa.lista.sample.compose.HeaderComposeItem
 import com.rubensousa.lista.sample.compose.OptionComposeItem
 import com.rubensousa.lista.sample.compose.SmallCardComposeItem
-import com.rubensousa.lista.sample.model.*
-import com.rubensousa.lista.sample.recyclerview.BigCardRecyclerViewItem
-import com.rubensousa.lista.sample.recyclerview.CardListRecyclerViewModel
-import com.rubensousa.lista.sample.recyclerview.SmallCardRecyclerViewItem
-import com.rubensousa.lista.sample.recyclerview.CardListRecyclerViewItem
-import com.rubensousa.lista.sample.recyclerview.HeaderRecyclerViewItem
-import com.rubensousa.lista.sample.recyclerview.OptionRecyclerViewItem
+import com.rubensousa.lista.sample.model.CardModel
+import com.rubensousa.lista.sample.model.HeaderModel
+import com.rubensousa.lista.sample.model.OptionModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -83,7 +79,14 @@ class ComposeViewModel : ViewModel() {
                     )
                 )
             )
-           // list.add(CardListRecyclerViewItem(CardListRecyclerViewModel(id = list.size, items = ArrayList(cards))))
+            list.add(
+                CardListComposeItem(
+                    CardListComposeModel(
+                        id = list.size,
+                        items = cards.toImmutableList()
+                    )
+                )
+            )
         }
         listItems.value = list.toImmutableList()
     }

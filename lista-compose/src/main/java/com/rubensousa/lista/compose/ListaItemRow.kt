@@ -20,47 +20,44 @@ import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rubensousa.lista.section.ListaArgs
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun ListaGridColumn(
-    items: ImmutableList<ListaLazyGridItem>,
-    columns: GridCells,
+fun ListaItemRow(
+    items: ImmutableList<ListaLazyItem>,
     modifier: Modifier = Modifier,
     args: ListaArgs = ListaArgs.EMPTY,
     reverseLayout: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    verticalArrangement: Arrangement.Vertical = if (!reverseLayout) {
-        Arrangement.Top
+    verticalAlignment: Alignment.Vertical = Alignment.Top,
+    horizontalArrangement: Arrangement.Horizontal = if (!reverseLayout) {
+        Arrangement.Start
     } else {
-        Arrangement.Bottom
+        Arrangement.End
     },
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     lazyLoadingState: LazyLoadingState = LazyLoadingState.Idle,
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
     userScrollEnabled: Boolean = true,
     onScrolled: ((lastVisiblePosition: Int) -> Unit)? = null,
-    state: LazyGridState = rememberLazyGridState()
+    state: LazyListState = rememberLazyListState()
 ) {
-    LazyVerticalGrid(
+    LazyRow(
         modifier = modifier,
-        columns = columns,
         reverseLayout = reverseLayout,
-        verticalArrangement = verticalArrangement,
+        verticalAlignment = verticalAlignment,
         horizontalArrangement = horizontalArrangement,
         contentPadding = contentPadding,
         flingBehavior = flingBehavior,
@@ -71,13 +68,12 @@ fun ListaGridColumn(
             items = items,
             key = { item -> item.getKey() },
             contentType = { item -> item.getContentType() },
-            span = { item -> item.getSpan().invoke(this) }
         ) { item ->
             item.content(args).invoke(this)
         }
         lazyLoadingState.content?.let { lazyLoadingContent ->
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                lazyLoadingContent.Content(Modifier.fillMaxWidth())
+            item {
+                lazyLoadingContent.Content(Modifier.fillMaxHeight())
             }
         }
     }
@@ -94,5 +90,4 @@ fun ListaGridColumn(
             }
         }
     }
-
 }

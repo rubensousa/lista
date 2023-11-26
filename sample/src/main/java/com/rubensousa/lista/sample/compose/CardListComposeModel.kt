@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package com.rubensousa.lista.sample.recyclerview
+package com.rubensousa.lista.sample.compose
 
-import androidx.recyclerview.widget.DiffUtil
-import com.rubensousa.lista.sample.model.SectionModel
+import com.rubensousa.lista.compose.ListaLazyItem
+import kotlinx.collections.immutable.ImmutableList
 
-class ListModelDiffCallback : DiffUtil.ItemCallback<SectionModel>() {
-
-    override fun areItemsTheSame(oldItem: SectionModel, newItem: SectionModel): Boolean {
-        return oldItem.getId() == newItem.getId()
-    }
-
-    override fun areContentsTheSame(oldItem: SectionModel, newItem: SectionModel): Boolean {
-        return oldItem.equals(newItem)
-    }
-
-}
+data class CardListComposeModel(val id: Int, val items: ImmutableList<ListaLazyItem>)

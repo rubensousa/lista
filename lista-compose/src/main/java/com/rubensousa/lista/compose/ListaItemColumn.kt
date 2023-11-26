@@ -51,14 +51,9 @@ fun ListaItemColumn(
     lazyLoadingState: LazyLoadingState = LazyLoadingState.Idle,
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
     userScrollEnabled: Boolean = true,
-    onScrolled: (lastVisiblePosition: Int) -> Unit = {},
+    onScrolled: ((lastVisiblePosition: Int) -> Unit)? = null,
     state: LazyListState = rememberLazyListState()
 ) {
-    val lastVisiblePosition = remember {
-        derivedStateOf {
-            state.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-        }
-    }
     LazyColumn(
         modifier = modifier,
         reverseLayout = reverseLayout,
@@ -83,10 +78,16 @@ fun ListaItemColumn(
         }
     }
 
-    lastVisiblePosition.value?.let { position ->
-        LaunchedEffect(key1 = position) {
-            onScrolled(position)
+    onScrolled?.let {
+        val lastVisiblePosition = remember {
+            derivedStateOf {
+                state.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+            }
+        }
+        lastVisiblePosition.value?.let { position ->
+            LaunchedEffect(key1 = position) {
+                onScrolled(position)
+            }
         }
     }
-
 }

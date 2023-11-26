@@ -19,9 +19,8 @@ package com.rubensousa.lista.sample.compose
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -31,18 +30,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import com.rubensousa.lista.compose.ListaLazyGridItem
+import com.rubensousa.lista.compose.ListaLazyItem
 import com.rubensousa.lista.sample.R
 import com.rubensousa.lista.sample.model.CardModel
 import com.rubensousa.lista.section.ListaArgs
 
-class SmallCardComposeItem(val model: CardModel) : ListaLazyGridItem {
+class SmallCardComposeItem(val model: CardModel) : ListaLazyItem {
 
     override fun getKey(): String = "Card${model.id}"
 
     override fun getContentType(): Any = CardModel::class
 
-    override fun content(args: ListaArgs): @Composable LazyGridItemScope.() -> Unit = {
+    override fun content(args: ListaArgs): @Composable LazyItemScope.() -> Unit = {
         ElevatedCard(
             modifier = Modifier.size(160.dp),
             shape = RoundedCornerShape(8.dp),

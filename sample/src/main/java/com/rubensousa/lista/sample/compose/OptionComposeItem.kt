@@ -44,7 +44,7 @@ class OptionComposeItem(
 
     override fun getSpan(): LazyGridItemSpanScope.() -> GridItemSpan = { GridItemSpan(maxLineSpan) }
 
-    override fun content(args: ListaArgs): @Composable LazyGridItemScope.() -> Unit = {
+    override fun gridContent(args: ListaArgs): @Composable LazyGridItemScope.() -> Unit = {
         Column(
             modifier = Modifier
                 .fillGridWidth(inheritedHorizontalPadding = 8.dp)

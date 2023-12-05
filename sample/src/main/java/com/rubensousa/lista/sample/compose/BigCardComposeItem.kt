@@ -37,9 +37,10 @@ class BigCardComposeItem(private val model: CardModel) : ListaLazyGridItem {
 
     override fun getContentType(): Any = "BigCard"
 
-    override fun content(args: ListaArgs): @Composable LazyGridItemScope.() -> Unit = {
+    override fun gridContent(args: ListaArgs): @Composable LazyGridItemScope.() -> Unit = {
         ElevatedCard(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .height(320.dp),
             shape = RoundedCornerShape(8.dp),
             colors = CardDefaults.cardColors(containerColor = colorResource(R.color.colorPrimary)),

@@ -41,7 +41,7 @@ interface ListaLazyGridItem {
 
     fun getSpan(): LazyGridItemSpanScope.() -> GridItemSpan = { DEFAULT_SPAN }
 
-    fun content(args: ListaArgs): @Composable LazyGridItemScope.() -> Unit
+    fun gridContent(args: ListaArgs): @Composable LazyGridItemScope.() -> Unit
 
     /**
      * Adjusts the bounds of an item that should fill the entire grid

@@ -27,13 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.rubensousa.lista.ListaSection
-import com.rubensousa.lista.ListaViewHolder
 import com.rubensousa.lista.compose.ListaLazyGridItem
-import com.rubensousa.lista.extensions.bindingOf
-import com.rubensousa.lista.item.ListaItem
-import com.rubensousa.lista.item.ListaItemSection
-import com.rubensousa.lista.sample.databinding.SectionHeaderBinding
 import com.rubensousa.lista.sample.model.HeaderModel
 import com.rubensousa.lista.section.ListaArgs
 
@@ -43,7 +37,7 @@ class HeaderComposeItem(private val model: HeaderModel) : ListaLazyGridItem {
 
     override fun getSpan(): LazyGridItemSpanScope.() -> GridItemSpan = { GridItemSpan(maxLineSpan) }
 
-    override fun content(args: ListaArgs): @Composable LazyGridItemScope.() -> Unit = {
+    override fun gridContent(args: ListaArgs): @Composable LazyGridItemScope.() -> Unit = {
         Text(
             modifier = Modifier.padding(8.dp),
             text = stringResource(model.titleResource),

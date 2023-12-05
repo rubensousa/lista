@@ -73,7 +73,7 @@ fun ListaGridColumn(
             contentType = { item -> item.getContentType() },
             span = { item -> item.getSpan().invoke(this) }
         ) { item ->
-            item.content(args).invoke(this)
+            item.gridContent(args).invoke(this)
         }
         lazyLoadingState.content?.let { lazyLoadingContent ->
             item(span = { GridItemSpan(maxLineSpan) }) {

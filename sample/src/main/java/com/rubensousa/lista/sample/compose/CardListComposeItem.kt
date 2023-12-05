@@ -36,7 +36,7 @@ class CardListComposeItem(private val model: CardListComposeModel) : ListaLazyGr
 
     override fun getSpan(): LazyGridItemSpanScope.() -> GridItemSpan = { GridItemSpan(maxLineSpan) }
 
-    override fun content(args: ListaArgs): @Composable LazyGridItemScope.() -> Unit = {
+    override fun gridContent(args: ListaArgs): @Composable LazyGridItemScope.() -> Unit = {
         ListaItemRow(
             modifier = Modifier
                 .fillGridWidth(inheritedHorizontalPadding = 8.dp),

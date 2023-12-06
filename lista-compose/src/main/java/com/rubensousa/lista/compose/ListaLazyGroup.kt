@@ -18,11 +18,12 @@ package com.rubensousa.lista.compose
 
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
+import com.rubensousa.lista.section.ListaArgs
 
 interface ListaLazyGroup {
 
-    fun listContent(scope: LazyListScope) {}
+    fun listContent(args: ListaArgs, scope: LazyListScope) {}
 
-    fun gridContent(scope: LazyGridScope) {}
+    fun gridContent(args: ListaArgs, scope: LazyGridScope) {}
 
 }

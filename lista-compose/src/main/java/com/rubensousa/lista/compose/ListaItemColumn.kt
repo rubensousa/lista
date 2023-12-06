@@ -91,3 +91,56 @@ fun ListaItemColumn(
         }
     }
 }
+
+@Composable
+fun ListaItemColumn(
+    items: ImmutableList<ListaLazyGroup>,
+    modifier: Modifier = Modifier,
+    args: ListaArgs = ListaArgs.EMPTY,
+    reverseLayout: Boolean = false,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    verticalArrangement: Arrangement.Vertical = if (!reverseLayout) {
+        Arrangement.Top
+    } else {
+        Arrangement.Bottom
+    },
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    lazyLoadingState: LazyLoadingState = LazyLoadingState.Idle,
+    flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
+    userScrollEnabled: Boolean = true,
+    onScrolled: ((lastVisiblePosition: Int) -> Unit)? = null,
+    state: LazyListState = rememberLazyListState()
+) {
+    LazyColumn(
+        modifier = modifier,
+        reverseLayout = reverseLayout,
+        verticalArrangement = verticalArrangement,
+        horizontalAlignment = horizontalAlignment,
+        contentPadding = contentPadding,
+        flingBehavior = flingBehavior,
+        userScrollEnabled = userScrollEnabled,
+        state = state
+    ) {
+        items.forEach { item ->
+            item.listContent(args, this)
+        }
+        lazyLoadingState.content?.let { lazyLoadingContent ->
+            item {
+                lazyLoadingContent.Content(Modifier.fillMaxWidth())
+            }
+        }
+    }
+
+    onScrolled?.let {
+        val lastVisiblePosition = remember {
+            derivedStateOf {
+                state.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+            }
+        }
+        lastVisiblePosition.value?.let { position ->
+            LaunchedEffect(key1 = position) {
+                onScrolled(position)
+            }
+        }
+    }
+}

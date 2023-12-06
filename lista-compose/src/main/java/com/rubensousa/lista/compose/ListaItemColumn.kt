@@ -93,7 +93,7 @@ fun ListaItemColumn(
 }
 
 @Composable
-fun ListaItemColumn(
+fun ListaGroupColumn(
     items: ImmutableList<ListaLazyGroup>,
     modifier: Modifier = Modifier,
     args: ListaArgs = ListaArgs.EMPTY,

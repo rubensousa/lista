@@ -98,7 +98,7 @@ fun ListaGridColumn(
 }
 
 @Composable
-fun ListaGridColumn(
+fun ListaGridGroupColumn(
     items: ImmutableList<ListaLazyGroup>,
     columns: GridCells,
     modifier: Modifier = Modifier,
